@@ -2,13 +2,19 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
+import { Producer } from '@modules/producer/producer.entity';
+
 import { Farm } from './farm.entity';
+import { CreateFarmDto } from './dtos/createFarm.dto';
+import { UpdateFarmDto } from './dtos/updateFarm.dto';
 
 @Injectable()
 export class FarmService {
   constructor(
     @InjectRepository(Farm)
     private farmRepository: Repository<Farm>,
+    @InjectRepository(Producer)
+    private producerRepository: Repository<Producer>,
   ) {}
 
   async findAllByProducer(producerId: string): Promise<Farm[]> {
@@ -27,18 +33,32 @@ export class FarmService {
     return farm;
   }
 
-  async create(farm: Farm): Promise<Farm> {
+  async create(producerId: string, farmDto: CreateFarmDto): Promise<Farm> {
+    const producer = await this.producerRepository.findOne({
+      where: { id: producerId },
+    });
+
+    if (!producer) {
+      throw new NotFoundException('Produtor não encontrado');
+    }
+
+    const farm = this.farmRepository.create({ ...farmDto, producer });
+
     return this.farmRepository.save(farm);
   }
 
-  async update(id: string, farm: Farm): Promise<Farm> {
-    // await this.farmRepository.update(id, farm);
-    // return this.farmRepository.findOne(id);
+  async update(farmId: string, farmDto: UpdateFarmDto): Promise<Farm> {
+    const farm = await this.farmRepository.findOne({
+      where: { id: farmId },
+    });
+    if (!farm) {
+      throw new NotFoundException('Fazenda não encontrada');
+    }
 
-    throw new Error('Method not implemented.');
+    return this.farmRepository.save({ ...farm, ...farmDto });
   }
 
-  async delete(id: string): Promise<void> {
-    await this.farmRepository.delete(id);
+  async delete(farmId: string): Promise<void> {
+    await this.farmRepository.delete(farmId);
   }
 }

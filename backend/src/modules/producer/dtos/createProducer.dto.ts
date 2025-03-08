@@ -11,13 +11,6 @@ import {
 
 import { CreateFarmDto } from '@modules/farm/dtos/createFarm.dto';
 
-// DTOs para validação
-export class CreateCropDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-}
-
 export class CreateProducerDto {
   @IsNotEmpty()
   @Matches(/^\d{11}$|^\d{14}$/, { message: 'CPF ou CNPJ inválido' })

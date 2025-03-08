@@ -1,5 +1,12 @@
 import { Type } from 'class-transformer';
-import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
+
+import {
+  IsArray,
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 
 import { CreateHarvestDto } from '@modules/harvest/dtos/createHarvest.dto';
 
@@ -26,6 +33,7 @@ export class CreateFarmDto {
   vegetationArea: number;
 
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateHarvestDto)
   harvests: CreateHarvestDto[];
