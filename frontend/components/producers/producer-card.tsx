@@ -1,6 +1,21 @@
 "use client";
 
 import { useState } from "react";
+
+import {
+  MoreHorizontal,
+  PenSquare,
+  Trash2,
+  PlusCircle,
+  ChevronDown,
+  ChevronRight,
+  MapPin,
+  Sprout,
+  Tractor,
+  BarChart3,
+  PieChart,
+} from "lucide-react";
+
 import {
   Card,
   CardContent,
@@ -25,46 +40,32 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  MoreHorizontal,
-  PenSquare,
-  Trash2,
-  PlusCircle,
-  ChevronDown,
-  ChevronRight,
-  MapPin,
-  Sprout,
-  TractorIcon as Farm,
-  BarChart3,
-  PieChart,
-} from "lucide-react";
-import type { Producer, Farm as FarmType } from "@/lib/types";
+import { Producer, Farm as FarmType } from "@/lib/types";
 import { formatDocument } from "@/utils/utils";
-import { FarmAreaChart } from "./farm-area-chart";
-import { FarmCropsChart } from "./farm-crops-chart";
+
+import { FarmAreaChart } from "../farm/farm-area-chart";
+import { FarmCropsChart } from "../farm/farm-crops-chart";
+import { useProducerContext } from "@/contexts/ProducerContext";
 
 interface ProducerCardProps {
   producer: Producer;
-  onEdit: (producer: Producer) => void;
-  onDelete: (id: string) => void;
-  onAddFarm: (producerId: string) => void;
-  onAddHarvest?: (farmId: string) => void;
 }
 
-export function ProducerCard({
-  producer,
-  onEdit,
-  onDelete,
-  onAddFarm,
-  onAddHarvest,
-}: ProducerCardProps) {
+export function ProducerCard({ producer }: ProducerCardProps) {
+  const ctxProducer = useProducerContext();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const totalArea = producer.farms.reduce(
     (sum, farm) => sum + farm.totalArea,
     0
   );
+
+  const handleAddFarm = () => {
+    ctxProducer.setFarmModalOpen(true);
+  };
 
   return (
     <Card className="border-green-100 overflow-hidden">
@@ -90,7 +91,7 @@ export function ProducerCard({
                 <PenSquare className="mr-2 h-4 w-4" />
                 Editar
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onAddFarm(producer.id)}>
+              <DropdownMenuItem onClick={handleAddFarm}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Adicionar Fazenda
               </DropdownMenuItem>
@@ -108,7 +109,7 @@ export function ProducerCard({
       <CardContent className="pb-2">
         <div className="grid grid-cols-2 gap-2 mb-2">
           <div className="flex items-center gap-2">
-            <Farm className="h-4 w-4 text-green-600" />
+            <Tractor className="h-4 w-4 text-green-600" />
             <span className="text-sm">{producer.farms.length} fazendas</span>
           </div>
           <div className="flex items-center gap-2">

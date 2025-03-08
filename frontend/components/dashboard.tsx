@@ -1,39 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { PlusCircle, TractorIcon as Farm, MapPin, Sprout } from "lucide-react";
+
 import {
   Card,
+  CardTitle,
+  CardHeader,
   CardContent,
   CardDescription,
-  CardHeader,
-  CardTitle,
 } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Button } from "@/components/ui/button";
-import { PlusCircle, TractorIcon as Farm, MapPin, Sprout } from "lucide-react";
-import { ProducerModal } from "@/components/producer-modal";
-import { FarmModal } from "@/components/farm-modal";
-import { AreaChart } from "@/components/area-chart";
-import { StateChart } from "@/components/state-chart";
-import { CropChart } from "@/components/crop-chart";
-import { LandUseChart } from "@/components/land-use-chart";
+import { FarmModal } from "@/components/farm/farm-modal";
+import { StateChart } from "@/components/charts/state-chart";
+import { CropChart } from "@/components/charts/crop-chart";
+import { LandUseChart } from "@/components/charts/land-use-chart";
+import { ProducerModal } from "@/components/producers/producer-modal";
+import { ProducerListCards } from "@/components/producers/producer-list-cards";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+import { Producer } from "@/lib/types";
+import { useProducerContext } from "@/contexts/ProducerContext";
 import { initialData } from "@/lib/data";
-import type { Producer } from "@/lib/types";
-import { ProducerListCards } from "@/components/producer-list-cards";
 
 export default function Dashboard() {
-  const [producers, setProducers] = useState<Producer[]>([]);
-  const [isProducerModalOpen, setIsProducerModalOpen] = useState(false);
-  const [isFarmModalOpen, setIsFarmModalOpen] = useState(false);
+  const [producers, setProducers] = useState<Producer[]>([initialData]);
+
   const [selectedProducer, setSelectedProducer] = useState<Producer | null>(
     null
   );
-  const [selectedFarmId, setSelectedFarmId] = useState<string | null>(null);
-
-  useEffect(() => {
-    // In a real app, this would be an API call
-    setProducers([initialData]);
-  }, []);
 
   const totalFarms = producers.reduce(
     (acc, producer) => acc + producer.farms.length,
@@ -45,62 +41,7 @@ export default function Dashboard() {
     0
   );
 
-  const handleAddProducer = (producer: Producer) => {
-    setProducers([...producers, producer]);
-    setIsProducerModalOpen(false);
-  };
-
-  const handleEditProducer = (updatedProducer: Producer) => {
-    setProducers(
-      producers.map((p) => (p.id === updatedProducer.id ? updatedProducer : p))
-    );
-    setSelectedProducer(null);
-    setIsProducerModalOpen(false);
-  };
-
-  const handleDeleteProducer = (id: string) => {
-    setProducers(producers.filter((p) => p.id !== id));
-  };
-
-  const handleAddFarm = (producerId: string, farm: any) => {
-    setProducers(
-      producers.map((p) => {
-        if (p.id === producerId) {
-          return {
-            ...p,
-            farms: [...p.farms, farm],
-          };
-        }
-        return p;
-      })
-    );
-    setIsFarmModalOpen(false);
-  };
-
-  const handleAddHarvest = (farmId: string, harvest: any) => {
-    setProducers(
-      producers.map((p) => {
-        const updatedFarms = p.farms.map((f) => {
-          if (f.id === farmId) {
-            return {
-              ...f,
-              harvests: [...f.harvests, harvest],
-            };
-          }
-          return f;
-        });
-
-        if (updatedFarms.some((f) => f.id === farmId)) {
-          return {
-            ...p,
-            farms: updatedFarms,
-          };
-        }
-        return p;
-      })
-    );
-    setSelectedFarmId(null);
-  };
+  const ctxProducer = useProducerContext();
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -123,7 +64,7 @@ export default function Dashboard() {
             </TabsList>
 
             <Button
-              onClick={() => setIsProducerModalOpen(true)}
+              onClick={() => ctxProducer.setProducerModalOpen(true)}
               className="bg-green-600 hover:bg-green-700 sm:ml-auto"
             >
               <PlusCircle className="mr-2 h-4 w-4" />
@@ -193,19 +134,7 @@ export default function Dashboard() {
               </Card>
             </div>
 
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-              <Card className="col-span-1 sm:col-span-2 border-green-100">
-                <CardHeader>
-                  <CardTitle>Área por Fazenda</CardTitle>
-                  <CardDescription>
-                    Distribuição de áreas entre as propriedades
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <AreaChart producers={producers} />
-                </CardContent>
-              </Card>
-
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               <Card className="border-green-100">
                 <CardHeader>
                   <CardTitle>Por Estado</CardTitle>
@@ -230,7 +159,7 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
 
-              <Card className="col-span-1 sm:col-span-2 lg:col-span-4 border-green-100">
+              <Card className="border-green-100">
                 <CardHeader>
                   <CardTitle>Culturas Plantadas</CardTitle>
                   <CardDescription>
@@ -253,48 +182,15 @@ export default function Dashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ProducerListCards
-                  producers={producers}
-                  onEdit={(producer) => {
-                    setSelectedProducer(producer);
-                    setIsProducerModalOpen(true);
-                  }}
-                  onDelete={handleDeleteProducer}
-                  onAddFarm={(producerId) => {
-                    setSelectedProducer(
-                      producers.find((p) => p.id === producerId) || null
-                    );
-                    setIsFarmModalOpen(true);
-                  }}
-                  onAddHarvest={handleAddHarvest}
-                />
+                <ProducerListCards />
               </CardContent>
             </Card>
           </TabsContent>
         </Tabs>
       </div>
 
-      {isProducerModalOpen && (
-        <ProducerModal
-          producer={selectedProducer}
-          onClose={() => {
-            setIsProducerModalOpen(false);
-            setSelectedProducer(null);
-          }}
-          onSave={selectedProducer ? handleEditProducer : handleAddProducer}
-        />
-      )}
-
-      {isFarmModalOpen && selectedProducer && (
-        <FarmModal
-          producerId={selectedProducer.id}
-          onClose={() => {
-            setIsFarmModalOpen(false);
-            setSelectedProducer(null);
-          }}
-          onSave={handleAddFarm}
-        />
-      )}
+      <ProducerModal producer={selectedProducer} />
+      <FarmModal producerId={""} />
     </div>
   );
 }

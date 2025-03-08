@@ -14,16 +14,13 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
-import { v4 as uuidv4 } from "@/lib/uuid";
 import { commonCrops } from "@/lib/constants";
 
 interface HarvestModalProps {
   farmId: string;
-  onClose: () => void;
-  onSave: (farmId: string, harvest: any) => void;
 }
 
-export function HarvestModal({ farmId, onClose, onSave }: HarvestModalProps) {
+export function HarvestModal({ farmId }: HarvestModalProps) {
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [selectedCrops, setSelectedCrops] = useState<
     Array<{ id: number; name: string }>
@@ -66,15 +63,15 @@ export function HarvestModal({ farmId, onClose, onSave }: HarvestModalProps) {
   };
 
   const handleSubmit = () => {
-    onSave(farmId, {
-      id: uuidv4(),
-      year: Number.parseInt(year),
-      crops: selectedCrops,
-    });
+    // onSave(farmId, {
+    //   id: uuidv4(),
+    //   year: Number.parseInt(year),
+    //   crops: selectedCrops,
+    // });
   };
 
   return (
-    <Dialog open onOpenChange={onClose}>
+    <Dialog open onOpenChange={() => {}}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Nova Safra</DialogTitle>
@@ -171,7 +168,7 @@ export function HarvestModal({ farmId, onClose, onSave }: HarvestModalProps) {
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={() => {}}>
             Cancelar
           </Button>
           <Button

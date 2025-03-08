@@ -1,14 +1,15 @@
 "use client";
 
 import {
-  PieChart,
   Pie,
   Cell,
-  ResponsiveContainer,
   Legend,
   Tooltip,
+  PieChart,
+  ResponsiveContainer,
 } from "recharts";
-import type { Producer } from "@/lib/types";
+
+import { Producer } from "@/lib/types";
 
 interface StateChartProps {
   producers: Producer[];

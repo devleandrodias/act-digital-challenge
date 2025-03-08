@@ -1,53 +1,38 @@
 "use client";
 
 import {
-  PieChart,
   Pie,
   Cell,
-  ResponsiveContainer,
   Legend,
   Tooltip,
+  PieChart,
+  ResponsiveContainer,
 } from "recharts";
-import type { Producer } from "@/lib/types";
 
-interface CropChartProps {
+import { Producer } from "@/lib/types";
+
+interface LandUseChartProps {
   producers: Producer[];
 }
 
-export function CropChart({ producers }: CropChartProps) {
-  // Count crops
-  const cropCount: Record<string, number> = {};
+export function LandUseChart({ producers }: LandUseChartProps) {
+  // Calculate total areas
+  let totalAgricultural = 0;
+  let totalVegetation = 0;
 
   producers.forEach((producer) => {
     producer.farms.forEach((farm) => {
-      farm.harvests.forEach((harvest) => {
-        harvest.crops.forEach((crop) => {
-          cropCount[crop.name] = (cropCount[crop.name] || 0) + 1;
-        });
-      });
+      totalAgricultural += farm.agriculturalArea;
+      totalVegetation += farm.vegetationArea;
     });
   });
 
-  const data = Object.entries(cropCount).map(([crop, count]) => ({
-    name: crop,
-    value: count,
-  }));
-
-  // Sort by count descending
-  data.sort((a, b) => b.value - a.value);
-
-  const COLORS = [
-    "#16a34a",
-    "#22c55e",
-    "#4ade80",
-    "#86efac",
-    "#bbf7d0",
-    "#15803d",
-    "#166534",
-    "#14532d",
-    "#dcfce7",
-    "#a7f3d0",
+  const data = [
+    { name: "Área Agricultável", value: totalAgricultural },
+    { name: "Área de Vegetação", value: totalVegetation },
   ];
+
+  const COLORS = ["#22c55e", "#16a34a"];
 
   return (
     <ResponsiveContainer width="100%" height={300} minWidth={200}>
@@ -57,7 +42,7 @@ export function CropChart({ producers }: CropChartProps) {
           cx="50%"
           cy="50%"
           labelLine={false}
-          outerRadius={120}
+          outerRadius={80}
           fill="#8884d8"
           dataKey="value"
         >
@@ -66,7 +51,7 @@ export function CropChart({ producers }: CropChartProps) {
           ))}
         </Pie>
         <Tooltip
-          formatter={(value) => [`${value} ocorrências`, ""]}
+          formatter={(value) => [`${value} ha`, ""]}
           contentStyle={{
             backgroundColor: "white",
             borderColor: "#e5e7eb",

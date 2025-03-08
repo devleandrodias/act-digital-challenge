@@ -1,35 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
+
 import {
   Dialog,
+  DialogTitle,
+  DialogHeader,
+  DialogFooter,
   DialogContent,
   DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
+
+import { Producer } from "@/lib/types";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import type { Producer } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { useProducer } from "@/hooks/useProducer";
 import { validateCPF, validateCNPJ } from "@/utils/utils";
-import { v4 as uuidv4 } from "@/lib/uuid";
+import { useProducerContext } from "@/contexts/ProducerContext";
 
 interface ProducerModalProps {
   producer?: Producer | null;
-  onClose: () => void;
-  onSave: (producer: Producer) => void;
 }
 
-export function ProducerModal({
-  producer,
-  onClose,
-  onSave,
-}: ProducerModalProps) {
+export function ProducerModal({ producer }: ProducerModalProps) {
+  const ctxProducer = useProducerContext();
+
   const [name, setName] = useState("");
   const [document, setDocument] = useState("");
   const [documentError, setDocumentError] = useState("");
+
+  const { createProducerMutation } = useProducer();
 
   useEffect(() => {
     if (producer) {
@@ -56,33 +57,25 @@ export function ProducerModal({
     setDocumentError("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const error = validateDocument(document);
+
     if (error) {
       setDocumentError(error);
       return;
     }
 
-    const cleanDoc = document.replace(/\D/g, "");
-
-    if (producer) {
-      onSave({
-        ...producer,
-        name,
-        document: cleanDoc,
-      });
-    } else {
-      onSave({
-        id: uuidv4(),
-        name,
-        document: cleanDoc,
-        farms: [],
-      });
-    }
+    await createProducerMutation.mutateAsync({
+      name,
+      document,
+    });
   };
 
   return (
-    <Dialog open onOpenChange={onClose}>
+    <Dialog
+      open={ctxProducer.producerModalOpen}
+      onOpenChange={ctxProducer.setProducerModalOpen}
+    >
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
@@ -119,7 +112,10 @@ export function ProducerModal({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button
+            variant="outline"
+            onClick={() => ctxProducer.setProducerModalOpen(false)}
+          >
             Cancelar
           </Button>
           <Button

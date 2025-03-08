@@ -1,34 +1,36 @@
 "use client";
 
 import { useState } from "react";
+
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
+  DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogContent,
+  DialogDescription,
 } from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+
 import {
   Select,
-  SelectContent,
   SelectItem,
-  SelectTrigger,
   SelectValue,
+  SelectContent,
+  SelectTrigger,
 } from "@/components/ui/select";
-import { v4 as uuidv4 } from "@/lib/uuid";
+
 import { brazilianStates } from "@/lib/constants";
+import { useProducerContext } from "@/contexts/ProducerContext";
 
 interface FarmModalProps {
   producerId: string;
-  onClose: () => void;
-  onSave: (producerId: string, farm: any) => void;
 }
 
-export function FarmModal({ producerId, onClose, onSave }: FarmModalProps) {
+export function FarmModal({ producerId }: FarmModalProps) {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -36,6 +38,8 @@ export function FarmModal({ producerId, onClose, onSave }: FarmModalProps) {
   const [agriculturalArea, setAgriculturalArea] = useState("");
   const [vegetationArea, setVegetationArea] = useState("");
   const [areaError, setAreaError] = useState("");
+
+  const ctxProducer = useProducerContext();
 
   const validateAreas = () => {
     const total = Number.parseFloat(totalArea);
@@ -66,27 +70,13 @@ export function FarmModal({ producerId, onClose, onSave }: FarmModalProps) {
     setAreaError(error);
   };
 
-  const handleSubmit = () => {
-    const error = validateAreas();
-    if (error) {
-      setAreaError(error);
-      return;
-    }
-
-    onSave(producerId, {
-      id: uuidv4(),
-      name,
-      city,
-      state,
-      totalArea: Number.parseFloat(totalArea),
-      agriculturalArea: Number.parseFloat(agriculturalArea),
-      vegetationArea: Number.parseFloat(vegetationArea),
-      harvests: [],
-    });
-  };
+  const handleSubmit = () => {};
 
   return (
-    <Dialog open onOpenChange={onClose}>
+    <Dialog
+      open={ctxProducer.farmModalOpen}
+      onOpenChange={ctxProducer.setFarmModalOpen}
+    >
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Nova Propriedade Rural</DialogTitle>
@@ -187,7 +177,10 @@ export function FarmModal({ producerId, onClose, onSave }: FarmModalProps) {
           )}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button
+            variant="outline"
+            onClick={() => ctxProducer.setFarmModalOpen(false)}
+          >
             Cancelar
           </Button>
           <Button
