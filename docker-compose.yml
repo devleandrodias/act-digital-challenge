@@ -11,35 +11,35 @@ services:
       - "5432:5432"                     
     restart: on-failure                
 
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile
-  #   container_name: backend_nestjs
-  #   restart: always
-  #   depends_on:
-  #     - postgres
-  #   environment:
-  #     DATABASE_URL: postgres://brain:brain@2025@postgres:5432/agriculture
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./backend:/app
-  #   command: ["npm", "run", "start:prod"]
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend_nestjs
+    restart: always
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgres://brain:brain@2025@postgres:5432/agriculture
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+    command: ["npm", "run", "start:prod"]
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: frontend_react
-  #   restart: always
-  #   depends_on:
-  #     - backend
-  #   ports:
-  #     - "5173:5173"
-  #   volumes:
-  #     - ./frontend:/app
-  #   command: ["npm", "run", "start"]
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend_react
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./frontend:/app
+    command: ["npm", "run", "start"]
 
 volumes:
   postgres_data:
