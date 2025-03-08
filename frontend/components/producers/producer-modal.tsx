@@ -11,19 +11,17 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
-import { Producer } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useProducer } from "@/hooks/useProducer";
-import { validateCPF, validateCNPJ } from "@/utils/utils";
+import { validateDocument } from "@/utils/utils";
 import { useProducerContext } from "@/contexts/ProducerContext";
+import { Producer } from "@/lib/types";
 
-interface ProducerModalProps {
-  producer?: Producer | null;
-}
+export function ProducerModal() {
+  const producer: Producer | null = null;
 
-export function ProducerModal({ producer }: ProducerModalProps) {
   const ctxProducer = useProducerContext();
 
   const [name, setName] = useState("");
@@ -31,26 +29,6 @@ export function ProducerModal({ producer }: ProducerModalProps) {
   const [documentError, setDocumentError] = useState("");
 
   const { createProducerMutation } = useProducer();
-
-  useEffect(() => {
-    if (producer) {
-      setName(producer.name);
-      setDocument(producer.document);
-    }
-  }, [producer]);
-
-  const validateDocument = (doc: string) => {
-    // Remove non-numeric characters
-    const cleanDoc = doc.replace(/\D/g, "");
-
-    if (cleanDoc.length === 11) {
-      return validateCPF(cleanDoc) ? "" : "CPF inválido";
-    } else if (cleanDoc.length === 14) {
-      return validateCNPJ(cleanDoc) ? "" : "CNPJ inválido";
-    } else {
-      return "Documento deve ser um CPF (11 dígitos) ou CNPJ (14 dígitos)";
-    }
-  };
 
   const handleDocumentChange = (value: string) => {
     setDocument(value);
@@ -67,8 +45,10 @@ export function ProducerModal({ producer }: ProducerModalProps) {
 
     await createProducerMutation.mutateAsync({
       name,
-      document,
+      document: document.replace(/\D/g, ""),
     });
+
+    ctxProducer.setProducerModalOpen(false);
   };
 
   return (

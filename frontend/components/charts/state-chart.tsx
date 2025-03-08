@@ -9,30 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Producer } from "@/lib/types";
-
-interface StateChartProps {
-  producers: Producer[];
-}
-
-export function StateChart({ producers }: StateChartProps) {
-  // Count farms by state
-  const stateCount: Record<string, number> = {};
-
-  producers.forEach((producer) => {
-    producer.farms.forEach((farm) => {
-      stateCount[farm.state] = (stateCount[farm.state] || 0) + 1;
-    });
-  });
-
-  const data = Object.entries(stateCount).map(([state, count]) => ({
-    name: state,
-    value: count,
-  }));
-
-  // Sort by count descending
-  data.sort((a, b) => b.value - a.value);
-
+export function StateChart() {
   const COLORS = [
     "#16a34a",
     "#22c55e",
@@ -44,6 +21,13 @@ export function StateChart({ producers }: StateChartProps) {
     "#14532d",
     "#dcfce7",
     "#a7f3d0",
+  ];
+
+  const data = [
+    { name: "SP", value: 10 },
+    { name: "RJ", value: 5 },
+    { name: "MG", value: 3 },
+    { name: "ES", value: 2 },
   ];
 
   return (

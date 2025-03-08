@@ -25,12 +25,9 @@ import {
 
 import { brazilianStates } from "@/lib/constants";
 import { useProducerContext } from "@/contexts/ProducerContext";
+import { useFarm } from "@/hooks/useFarm";
 
-interface FarmModalProps {
-  producerId: string;
-}
-
-export function FarmModal({ producerId }: FarmModalProps) {
+export function FarmFormModal() {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
@@ -40,6 +37,8 @@ export function FarmModal({ producerId }: FarmModalProps) {
   const [areaError, setAreaError] = useState("");
 
   const ctxProducer = useProducerContext();
+
+  const { createFarmMutation } = useFarm();
 
   const validateAreas = () => {
     const total = Number.parseFloat(totalArea);
@@ -70,14 +69,30 @@ export function FarmModal({ producerId }: FarmModalProps) {
     setAreaError(error);
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    const error = validateAreas();
+    if (error) {
+      setAreaError(error);
+      return;
+    }
+
+    await createFarmMutation.mutateAsync({
+      name,
+      city,
+      state,
+      totalArea,
+      vegetationArea,
+      agriculturalArea,
+      producerId: "f9a35bb5-de70-4fe2-bb39-b0ff78edabfb",
+    });
+  };
 
   return (
     <Dialog
       open={ctxProducer.farmModalOpen}
       onOpenChange={ctxProducer.setFarmModalOpen}
     >
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Nova Propriedade Rural</DialogTitle>
           <DialogDescription>

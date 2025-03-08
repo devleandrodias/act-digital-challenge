@@ -7,3 +7,11 @@ export function getProducers() {
 export function createProducer(producer: any) {
   return brainAgApi.post("/producers", producer);
 }
+
+export function updateProducer(producer: any) {
+  return brainAgApi.put(`/producers/${producer.id}`, producer);
+}
+
+export function deleteProducer(producerId: string) {
+  return brainAgApi.delete(`/producers/${producerId}`);
+}

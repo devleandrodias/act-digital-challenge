@@ -26,3 +26,9 @@ export interface Producer {
   name: string;
   farms: Farm[];
 }
+
+export type DashboardOutput = {
+  totalFarms: number;
+  totalArea: number;
+  totalCrops: number;
+};

@@ -9,33 +9,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Producer } from "@/lib/types";
-
-interface CropChartProps {
-  producers: Producer[];
-}
-
-export function CropChart({ producers }: CropChartProps) {
-  // Count crops
-  const cropCount: Record<string, number> = {};
-
-  producers.forEach((producer) => {
-    producer.farms.forEach((farm) => {
-      farm.harvests.forEach((harvest) => {
-        harvest.crops.forEach((crop) => {
-          cropCount[crop.name] = (cropCount[crop.name] || 0) + 1;
-        });
-      });
-    });
-  });
-
-  const data = Object.entries(cropCount).map(([crop, count]) => ({
-    name: crop,
-    value: count,
-  }));
-
-  // Sort by count descending
-  data.sort((a, b) => b.value - a.value);
+export function CropChart() {
+  const data = [
+    { name: "Soja", value: 10 },
+    { name: "Milho", value: 5 },
+    { name: "Café", value: 3 },
+    { name: "Cana-de-açúcar", value: 2 },
+  ];
 
   const COLORS = [
     "#16a34a",

@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { PlusCircle, TractorIcon as Farm, MapPin, Sprout } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { PlusCircle, Tractor, MapPin, Sprout } from "lucide-react";
 
 import {
   Card,
@@ -12,36 +12,38 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { FarmModal } from "@/components/farm/farm-modal";
-import { StateChart } from "@/components/charts/state-chart";
 import { CropChart } from "@/components/charts/crop-chart";
+import { StateChart } from "@/components/charts/state-chart";
 import { LandUseChart } from "@/components/charts/land-use-chart";
 import { ProducerModal } from "@/components/producers/producer-modal";
 import { ProducerListCards } from "@/components/producers/producer-list-cards";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Producer } from "@/lib/types";
+import { getDashboardData } from "@/services/dashboard.service";
 import { useProducerContext } from "@/contexts/ProducerContext";
-import { initialData } from "@/lib/data";
+
+import { Pending } from "./penfing";
+import { ErrorMessage } from "./error";
+import { FarmFormModal } from "./farm/farm-form-modal";
 
 export default function Dashboard() {
-  const [producers, setProducers] = useState<Producer[]>([initialData]);
-
-  const [selectedProducer, setSelectedProducer] = useState<Producer | null>(
-    null
-  );
-
-  const totalFarms = producers.reduce(
-    (acc, producer) => acc + producer.farms.length,
-    0
-  );
-  const totalArea = producers.reduce(
-    (acc, producer) =>
-      acc + producer.farms.reduce((sum, farm) => sum + farm.totalArea, 0),
-    0
-  );
-
   const ctxProducer = useProducerContext();
+
+  const { data, isPending, isError } = useQuery({
+    retry: 2,
+    queryKey: ["dashboardData"],
+    queryFn: () => {
+      return getDashboardData();
+    },
+  });
+
+  if (isPending) {
+    return <Pending />;
+  }
+
+  if (isError) {
+    return <ErrorMessage message="Erro ao carregar dados do dashboard" />;
+  }
 
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
@@ -72,18 +74,20 @@ export default function Dashboard() {
             </Button>
           </div>
 
+          {/* Dashboard */}
           <TabsContent value="dashboard" className="space-y-4">
+            {/* Cards Metrics */}
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
               <Card className="border-green-100">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">
                     Total de Fazendas
                   </CardTitle>
-                  <Farm className="h-4 w-4 text-green-600" />
+                  <Tractor className="h-4 w-4 text-green-600" />
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-green-800">
-                    {totalFarms}
+                    {data.data.totalFarms}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Propriedades rurais cadastradas
@@ -100,7 +104,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-green-800">
-                    {totalArea} ha
+                    {data.data.totalArea} ha
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Hectares registrados
@@ -117,15 +121,7 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold text-green-800">
-                    {producers.reduce((acc, producer) => {
-                      const crops = new Set();
-                      producer.farms.forEach((farm) => {
-                        farm.harvests.forEach((harvest) => {
-                          harvest.crops.forEach((crop) => crops.add(crop.name));
-                        });
-                      });
-                      return acc + crops.size;
-                    }, 0)}
+                    {data.data.totalCrops}
                   </div>
                   <p className="text-xs text-muted-foreground">
                     Tipos de culturas plantadas
@@ -134,6 +130,7 @@ export default function Dashboard() {
               </Card>
             </div>
 
+            {/* Charts Metrics */}
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               <Card className="border-green-100">
                 <CardHeader>
@@ -143,7 +140,7 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <StateChart producers={producers} />
+                  <StateChart />
                 </CardContent>
               </Card>
 
@@ -155,7 +152,7 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <LandUseChart producers={producers} />
+                  <LandUseChart totalAgricultural={1} totalVegetation={2} />
                 </CardContent>
               </Card>
 
@@ -167,12 +164,13 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CropChart producers={producers} />
+                  <CropChart />
                 </CardContent>
               </Card>
             </div>
           </TabsContent>
 
+          {/* Producers */}
           <TabsContent value="producers">
             <Card className="border-green-100">
               <CardHeader>
@@ -189,8 +187,8 @@ export default function Dashboard() {
         </Tabs>
       </div>
 
-      <ProducerModal producer={selectedProducer} />
-      <FarmModal producerId={""} />
+      <ProducerModal />
+      <FarmFormModal />
     </div>
   );
 }

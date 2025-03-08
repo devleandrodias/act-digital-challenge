@@ -16,11 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { commonCrops } from "@/lib/constants";
 
-interface HarvestModalProps {
-  farmId: string;
-}
-
-export function HarvestModal({ farmId }: HarvestModalProps) {
+export function HarvestModal() {
   const [year, setYear] = useState(new Date().getFullYear().toString());
   const [selectedCrops, setSelectedCrops] = useState<
     Array<{ id: number; name: string }>

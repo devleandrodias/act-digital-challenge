@@ -1,17 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { getProducers } from "@/services/producer.service";
 import { HarvestModal } from "@/components/harvest/harvest-modal";
 import { ProducerCard } from "@/components/producers/producer-card";
 
-interface ProducerListCardsProps {}
-
-export function ProducerListCards({}: ProducerListCardsProps) {
-  const [selectedFarmId, setSelectedFarmId] = useState<string | null>(null);
-
+export function ProducerListCards() {
   const { data, isPending, isError } = useQuery<any>({
     retry: 2,
     queryKey: ["producerData"],
@@ -43,7 +38,7 @@ export function ProducerListCards({}: ProducerListCardsProps) {
         </div>
       )}
 
-      {selectedFarmId && <HarvestModal farmId={selectedFarmId} />}
+      <HarvestModal />
     </div>
   );
 }

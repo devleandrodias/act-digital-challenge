@@ -9,27 +9,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Producer } from "@/lib/types";
-
 interface LandUseChartProps {
-  producers: Producer[];
+  totalVegetation: number;
+  totalAgricultural: number;
 }
 
-export function LandUseChart({ producers }: LandUseChartProps) {
-  // Calculate total areas
-  let totalAgricultural = 0;
-  let totalVegetation = 0;
-
-  producers.forEach((producer) => {
-    producer.farms.forEach((farm) => {
-      totalAgricultural += farm.agriculturalArea;
-      totalVegetation += farm.vegetationArea;
-    });
-  });
-
+export function LandUseChart(props: LandUseChartProps) {
   const data = [
-    { name: "Área Agricultável", value: totalAgricultural },
-    { name: "Área de Vegetação", value: totalVegetation },
+    { name: "Área Agricultável", value: props.totalAgricultural },
+    { name: "Área de Vegetação", value: props.totalVegetation },
   ];
 
   const COLORS = ["#22c55e", "#16a34a"];
