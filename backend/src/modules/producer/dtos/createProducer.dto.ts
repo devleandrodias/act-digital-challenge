@@ -1,12 +1,15 @@
 import { Type } from 'class-transformer';
+
 import {
-  IsNotEmpty,
-  IsString,
   IsArray,
-  ValidateNested,
   Matches,
+  IsString,
   IsOptional,
+  IsNotEmpty,
+  ValidateNested,
 } from 'class-validator';
+
+import { CreateFarmDto } from '@modules/farm/dtos/createFarm.dto';
 
 // DTOs para validação
 export class CreateCropDto {
@@ -23,33 +26,6 @@ export class CreateHarvestDto {
   @ValidateNested({ each: true })
   @Type(() => CreateCropDto)
   crops: CreateCropDto[];
-}
-export class CreateFarmDto {
-  @IsNotEmpty()
-  @IsString()
-  name: string;
-
-  @IsNotEmpty()
-  @IsString()
-  city: string;
-
-  @IsNotEmpty()
-  @IsString()
-  state: string;
-
-  @IsNotEmpty()
-  totalArea: number;
-
-  @IsNotEmpty()
-  agriculturalArea: number;
-
-  @IsNotEmpty()
-  vegetationArea: number;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateHarvestDto)
-  harvests: CreateHarvestDto[];
 }
 
 export class CreateProducerDto {
