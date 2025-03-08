@@ -1,5 +1,6 @@
+import { Harvest } from '@modules/harvest/harvest.entity';
+
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Harvest } from './harvest.entity';
 
 @Entity()
 export class Crop {
