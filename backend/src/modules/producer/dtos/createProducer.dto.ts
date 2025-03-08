@@ -18,16 +18,6 @@ export class CreateCropDto {
   name: string;
 }
 
-export class CreateHarvestDto {
-  @IsNotEmpty()
-  year: number;
-
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => CreateCropDto)
-  crops: CreateCropDto[];
-}
-
 export class CreateProducerDto {
   @IsNotEmpty()
   @Matches(/^\d{11}$|^\d{14}$/, { message: 'CPF ou CNPJ inválido' })

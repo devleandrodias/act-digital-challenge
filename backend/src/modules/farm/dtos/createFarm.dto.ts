@@ -1,6 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsArray, IsNotEmpty, IsString, ValidateNested } from 'class-validator';
-import { CreateHarvestDto } from '@modules/producer/dtos/createProducer.dto';
+
+import { CreateHarvestDto } from '@modules/harvest/dtos/createHarvest.dto';
 
 export class CreateFarmDto {
   @IsNotEmpty()
