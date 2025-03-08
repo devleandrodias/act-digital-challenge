@@ -5,6 +5,7 @@ import {
   IsArray,
   ValidateNested,
   Matches,
+  IsOptional,
 } from 'class-validator';
 
 // DTOs para validação
@@ -61,6 +62,7 @@ export class CreateProducerDto {
   name: string;
 
   @IsArray()
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => CreateFarmDto)
   farms: CreateFarmDto[];
