@@ -10,17 +10,19 @@ import {
 } from "recharts";
 
 interface LandUseChartProps {
-  totalVegetation: number;
-  totalAgricultural: number;
+  vegetationArea: number;
+  agriculturalArea: number;
+  unidentifiedArea: number;
 }
 
 export function LandUseChart(props: LandUseChartProps) {
   const data = [
-    { name: "Área Agricultável", value: props.totalAgricultural },
-    { name: "Área de Vegetação", value: props.totalVegetation },
+    { name: "Área Agricultável", value: props.agriculturalArea },
+    { name: "Área de Vegetação", value: props.vegetationArea },
+    { name: "Área Não Identificada", value: props.unidentifiedArea },
   ];
 
-  const COLORS = ["#22c55e", "#16a34a"];
+  const COLORS = ["#22c55e", "#16a34a", "#d1d5db"];
 
   return (
     <ResponsiveContainer width="100%" height={300} minWidth={200}>
@@ -34,7 +36,7 @@ export function LandUseChart(props: LandUseChartProps) {
           fill="#8884d8"
           dataKey="value"
         >
-          {data.map((entry, index) => (
+          {data.map((_, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>

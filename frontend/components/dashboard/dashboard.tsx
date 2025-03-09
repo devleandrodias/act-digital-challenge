@@ -145,7 +145,7 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <StateChart />
+                  <StateChart farmsByState={data.data.farmsByState} />
                 </CardContent>
               </Card>
 
@@ -157,7 +157,11 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <LandUseChart totalAgricultural={1} totalVegetation={2} />
+                  <LandUseChart
+                    vegetationArea={data.data.vegetationArea}
+                    agriculturalArea={data.data.agriculturalArea}
+                    unidentifiedArea={data.data.unidentifiedArea}
+                  />
                 </CardContent>
               </Card>
 
@@ -169,7 +173,7 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CropChart />
+                  <CropChart cropsByType={data.data.cropsByType} />
                 </CardContent>
               </Card>
             </div>

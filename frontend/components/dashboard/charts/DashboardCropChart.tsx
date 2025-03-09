@@ -9,14 +9,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export function CropChart() {
-  const data = [
-    { name: "Soja", value: 10 },
-    { name: "Milho", value: 5 },
-    { name: "Café", value: 3 },
-    { name: "Cana-de-açúcar", value: 2 },
-  ];
+type CropChartProps = {
+  cropsByType: { name: string; value: number }[];
+};
 
+export function CropChart(props: CropChartProps) {
   const COLORS = [
     "#16a34a",
     "#22c55e",
@@ -34,7 +31,7 @@ export function CropChart() {
     <ResponsiveContainer width="100%" height={300} minWidth={200}>
       <PieChart>
         <Pie
-          data={data}
+          data={props.cropsByType}
           cx="50%"
           cy="50%"
           labelLine={false}
@@ -42,7 +39,7 @@ export function CropChart() {
           fill="#8884d8"
           dataKey="value"
         >
-          {data.map((entry, index) => (
+          {props.cropsByType.map((entry, index) => (
             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
         </Pie>
