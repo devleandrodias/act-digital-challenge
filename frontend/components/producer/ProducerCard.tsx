@@ -40,6 +40,11 @@ export function ProducerCard({ producer }: ProducerCardProps) {
     ctxProducer.setProducerModalOpen(open);
   };
 
+  const handleViewProducer = (producer: Producer) => {
+    ctxProducer.setFarmListModalOpen(true);
+    ctxProducer.setProducerSelected(producer);
+  };
+
   const handleCancelDelete = () => {
     setConfirmDelete(false);
     ctxProducer.setProducerSelected(null);
@@ -54,7 +59,10 @@ export function ProducerCard({ producer }: ProducerCardProps) {
     <>
       {/* Card de detalhe da fazenda */}
       <Card className="border-green-100 overflow-hidden cursor-pointer hover:border-green-300 transition-colors relative">
-        <CardHeader className="pb-2">
+        <CardHeader
+          className="pb-2"
+          onClick={() => handleViewProducer(producer)}
+        >
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-lg font-bold text-green-800">

@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { z } from "zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   Dialog,
@@ -12,7 +15,6 @@ import {
 } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 
 import {
@@ -27,65 +29,93 @@ import { useFarm } from "@/hooks/useFarm";
 import { brazilianStates } from "@/lib/constants";
 import { useProducerContext } from "@/contexts/ProducerContext";
 
-export function FarmFormModal() {
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [totalArea, setTotalArea] = useState("");
-  const [agriculturalArea, setAgriculturalArea] = useState("");
-  const [vegetationArea, setVegetationArea] = useState("");
-  const [areaError, setAreaError] = useState("");
+import {
+  Form,
+  FormItem,
+  FormLabel,
+  FormField,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 
+const farmFormSchema = z.object({
+  name: z.string().min(1, "Nome não pode ser vazio"),
+  city: z.string().min(1, "Cidade não pode ser vazio"),
+  state: z.string().min(1, "Estado não pode ser vazio"),
+  totalArea: z.string().min(1, "Área total não pode ser vazio"),
+  agriculturalArea: z.string().min(1, "Área agrícola não pode ser vazio"),
+  vegetationArea: z.string().min(1, "Área de vegetação não pode ser vazio"),
+});
+
+type FarmFormValues = z.infer<typeof farmFormSchema>;
+
+export function FarmFormModal() {
   const ctxProducer = useProducerContext();
 
-  const { createFarmMutation } = useFarm();
+  const { createFarmMutation, updateFarmMutation } = useFarm();
 
-  const validateAreas = () => {
-    const total = Number.parseFloat(totalArea);
-    const agricultural = Number.parseFloat(agriculturalArea);
-    const vegetation = Number.parseFloat(vegetationArea);
+  const form = useForm<FarmFormValues>({
+    resolver: zodResolver(farmFormSchema),
+    defaultValues: {
+      name: "",
+      city: "",
+      state: "",
+      totalArea: "",
+      agriculturalArea: "",
+      vegetationArea: "",
+    },
+  });
 
-    if (isNaN(total) || total <= 0) {
-      return "A área total deve ser um número positivo";
+  async function onSubmit(values: FarmFormValues) {
+    if (ctxProducer.producerSelected) {
+      if (!ctxProducer.farmSelected) {
+        await createFarmMutation.mutateAsync({
+          name: values.name,
+          city: values.city,
+          state: values.state,
+          totalArea: Number(values.totalArea),
+          vegetationArea: Number(values.vegetationArea),
+          agriculturalArea: Number(values.agriculturalArea),
+          producerId: ctxProducer.producerSelected.id,
+        });
+      }
+
+      if (ctxProducer.farmSelected) {
+        await updateFarmMutation.mutateAsync({
+          id: ctxProducer.farmSelected.id,
+          name: values.name,
+          city: values.city,
+          state: values.state,
+          totalArea: Number(values.totalArea),
+          vegetationArea: Number(values.vegetationArea),
+          agriculturalArea: Number(values.agriculturalArea),
+        });
+      }
     }
 
-    if (isNaN(agricultural) || agricultural < 0) {
-      return "A área agricultável deve ser um número não negativo";
-    }
+    ctxProducer.setFarmFormModalOpen(false);
 
-    if (isNaN(vegetation) || vegetation < 0) {
-      return "A área de vegetação deve ser um número não negativo";
-    }
+    form.reset();
+  }
 
-    if (agricultural + vegetation > total) {
-      return "A soma das áreas agricultável e de vegetação não pode ultrapassar a área total";
-    }
-
-    return "";
-  };
-
-  const handleAreaChange = () => {
-    const error = validateAreas();
-    setAreaError(error);
-  };
-
-  const handleSubmit = async () => {
-    const error = validateAreas();
-    if (error) {
-      setAreaError(error);
-      return;
-    }
-
-    await createFarmMutation.mutateAsync({
-      name,
-      city,
-      state,
-      totalArea,
-      vegetationArea,
-      agriculturalArea,
-      producerId: "f9a35bb5-de70-4fe2-bb39-b0ff78edabfb",
-    });
-  };
+  useEffect(() => {
+    form.reset();
+    form.setValue("name", ctxProducer.farmSelected?.name ?? "");
+    form.setValue("city", ctxProducer.farmSelected?.city ?? "");
+    form.setValue("state", ctxProducer.farmSelected?.state ?? "");
+    form.setValue(
+      "totalArea",
+      String(ctxProducer.farmSelected?.totalArea) ?? ""
+    );
+    form.setValue(
+      "agriculturalArea",
+      String(ctxProducer.farmSelected?.agriculturalArea) ?? ""
+    );
+    form.setValue(
+      "vegetationArea",
+      String(ctxProducer.farmSelected?.vegetationArea) ?? ""
+    );
+  }, [ctxProducer.farmSelected, form]);
 
   return (
     <Dialog
@@ -99,98 +129,143 @@ export function FarmFormModal() {
             Preencha as informações da fazenda
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Nome da Fazenda</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nome da propriedade rural"
-            />
-          </div>
+        <Form {...form}>
+          <form>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome da Fazenda</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          placeholder="Nome da propriedade rural"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="city">Cidade</Label>
-              <Input
-                id="city"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-                placeholder="Cidade"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="state">Estado</Label>
-              <Select value={state} onValueChange={setState}>
-                <SelectTrigger id="state">
-                  <SelectValue placeholder="Selecione" />
-                </SelectTrigger>
-                <SelectContent>
-                  {brazilianStates.map((state) => (
-                    <SelectItem key={state.value} value={state.value}>
-                      {state.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="city"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Cidade</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="Cidade" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="state"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Estado</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger id="state">
+                              <SelectValue placeholder="Selecione" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {brazilianStates.map((state) => (
+                              <SelectItem key={state.value} value={state.value}>
+                                {state.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="totalArea">Área Total (ha)</Label>
-              <Input
-                id="totalArea"
-                type="number"
-                min="0"
-                step="0.01"
-                value={totalArea}
-                onChange={(e) => {
-                  setTotalArea(e.target.value);
-                  setTimeout(() => handleAreaChange(), 0);
-                }}
-                placeholder="0.00"
-              />
+              <div className="grid grid-cols-3 gap-4">
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="totalArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Área Total (ha)</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="0.00"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="vegetationArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Área Vegetal (ha)</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="0.00"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <FormField
+                    control={form.control}
+                    name="agriculturalArea"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Área Agricultável (ha)</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            min="0"
+                            step="1"
+                            placeholder="0.00"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
             </div>
-            <div className="grid gap-2">
-              <Label htmlFor="agriculturalArea">Área Agricultável (ha)</Label>
-              <Input
-                id="agriculturalArea"
-                type="number"
-                min="0"
-                step="0.01"
-                value={agriculturalArea}
-                onChange={(e) => {
-                  setAgriculturalArea(e.target.value);
-                  setTimeout(() => handleAreaChange(), 0);
-                }}
-                placeholder="0.00"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="vegetationArea">Área de Vegetação (ha)</Label>
-              <Input
-                id="vegetationArea"
-                type="number"
-                min="0"
-                step="0.01"
-                value={vegetationArea}
-                onChange={(e) => {
-                  setVegetationArea(e.target.value);
-                  setTimeout(() => handleAreaChange(), 0);
-                }}
-                placeholder="0.00"
-              />
-            </div>
-          </div>
-
-          {areaError && (
-            <p className="text-sm text-red-500 bg-red-50 p-2 rounded-md border border-red-200">
-              <strong>Erro:</strong> {areaError}
-            </p>
-          )}
-        </div>
+          </form>
+        </Form>
         <DialogFooter>
           <Button
             variant="outline"
@@ -202,11 +277,11 @@ export function FarmFormModal() {
             Cancelar
           </Button>
           <Button
-            onClick={handleSubmit}
-            disabled={!name || !city || !state || !totalArea || !!areaError}
+            type="submit"
             className="bg-green-600 hover:bg-green-700"
+            onClick={form.handleSubmit(onSubmit)}
           >
-            Salvar
+            {ctxProducer.farmSelected ? "Atualizar" : "Salvar"}
           </Button>
         </DialogFooter>
       </DialogContent>

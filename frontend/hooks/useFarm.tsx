@@ -1,31 +1,67 @@
-import { createFarm } from "@/services/farm.service";
+import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { CreateFarmInput, UpdateFarmInput } from "@/types/farm.types";
+import { createFarm, deleteFarm, updateFarm } from "@/services/farm.service";
 
 export function useFarm() {
   const queryClient = useQueryClient();
 
   const createFarmMutation = useMutation({
-    mutationFn: (farm: any) => createFarm(farm),
+    mutationFn: (farm: CreateFarmInput) => createFarm(farm),
     onSuccess: () => {
-      //   toast({
-      //     title: "Mensagem excluída com sucesso",
-      //     description: "Seu mensagem foi excluída com sucesso",
-      //   });
+      toast.success("Fazenda criada com sucesso", {
+        description: "Operação realizada com sucesso",
+      });
 
       queryClient.invalidateQueries({
         queryKey: ["producerData"],
       });
     },
     onError: () => {
-      //   toast({
-      //     title: "Erro ao excluir mensagem",
-      //     description: "Tente novamente mais tarde",
-      //     variant: "destructive",
-      //   });
+      toast.error("Erro ao criar fazenda", {
+        description: "Tente novamente mais tarde",
+      });
+    },
+  });
+
+  const updateFarmMutation = useMutation({
+    mutationFn: (farm: UpdateFarmInput) => updateFarm(farm),
+    onSuccess: () => {
+      toast.success("Fazenda atualizada com sucesso", {
+        description: "Operação realizada com sucesso",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["producerData"],
+      });
+    },
+    onError: () => {
+      toast.error("Erro ao atualizar fazenda", {
+        description: "Tente novamente mais tarde",
+      });
+    },
+  });
+
+  const deleteFarmMutation = useMutation({
+    mutationFn: (farmId: string) => deleteFarm(farmId),
+    onSuccess: () => {
+      toast.success("Fazenda deletada com sucesso", {
+        description: "Operação realizada com sucesso",
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["producerData"],
+      });
+    },
+    onError: () => {
+      toast.error("Erro ao deletar fazenda", {
+        description: "Tente novamente mais tarde",
+      });
     },
   });
 
   return {
     createFarmMutation,
+    updateFarmMutation,
+    deleteFarmMutation,
   };
 }

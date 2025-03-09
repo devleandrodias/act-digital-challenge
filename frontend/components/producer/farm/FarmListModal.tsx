@@ -1,4 +1,4 @@
-import { PenSquare, PlusCircle } from "lucide-react";
+import { PlusCircle } from "lucide-react";
 
 import { formatDocument } from "@/utils/utils";
 
@@ -11,6 +11,7 @@ import {
 
 import { useProducerContext } from "@/contexts/ProducerContext";
 
+import { FarmCard } from "./FarmCard";
 import { Button } from "../../ui/button";
 import { DialogHeader, DialogFooter } from "../../ui/dialog";
 
@@ -37,32 +38,9 @@ export function FarmListModal() {
         <div className="py-4">
           <h4 className="text-sm font-medium mb-3">Propriedades</h4>
           {existsFarms ? (
-            <div className="grid gap-2">
+            <div className="grid gap-3">
               {ctxProducer.producerSelected?.farms.map((farm) => (
-                <Button
-                  key={farm.id}
-                  variant="outline"
-                  className="w-full justify-between h-auto py-3 px-4"
-                  onClick={() => {
-                    ctxProducer.setFarmDetailModalOpen(true);
-                    ctxProducer.setFarmSelected(farm);
-                  }}
-                >
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium text-sm">{farm.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {farm.city}, {farm.state}
-                    </span>
-                  </div>
-                  <div className="flex flex-col items-end text-right">
-                    <span className="text-xs text-muted-foreground">
-                      Área Total
-                    </span>
-                    <span className="text-sm font-medium">
-                      {farm.totalArea} ha
-                    </span>
-                  </div>
-                </Button>
+                <FarmCard key={farm.id} farm={farm} />
               ))}
             </div>
           ) : (
@@ -83,16 +61,6 @@ export function FarmListModal() {
             Fechar
           </Button>
           <div className="flex gap-2">
-            {/* TODO: Esse botão tem que ir para dentro do map das propriedade para poder editar */}
-            <Button
-              variant="outline"
-              onClick={() => {
-                ctxProducer.setFarmFormModalOpen(false);
-              }}
-            >
-              <PenSquare className="mr-2 h-4 w-4" />
-              Editar
-            </Button>
             <Button
               className="bg-green-600 hover:bg-green-700"
               onClick={() => {
