@@ -31,7 +31,19 @@ export function ProducerCard({ producer }: ProducerCardProps) {
 
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  const totalArea = 322;
+  const totalArea = producer.farms.reduce(
+    (total, farm) => total + Number(farm.totalArea),
+    0
+  );
+
+  const handleOpenChange = (open: boolean) => {
+    ctxProducer.setProducerModalOpen(open);
+  };
+
+  const handleCancelDelete = () => {
+    setConfirmDelete(false);
+    ctxProducer.setProducerSelected(null);
+  };
 
   const handleDeleteProducer = async () => {
     await deleteProducerMutation.mutateAsync(producer.id);
@@ -114,7 +126,7 @@ export function ProducerCard({ producer }: ProducerCardProps) {
       </Card>
 
       {/* Modal de confirmação de exclusão da fazenda */}
-      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+      <Dialog open={confirmDelete} onOpenChange={handleOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Confirmar exclusão</DialogTitle>
@@ -124,7 +136,7 @@ export function ProducerCard({ producer }: ProducerCardProps) {
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setConfirmDelete(false)}>
+            <Button variant="outline" onClick={handleCancelDelete}>
               Cancelar
             </Button>
             <Button variant="destructive" onClick={handleDeleteProducer}>

@@ -1,6 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { z } from "zod";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import {
   Dialog,
@@ -12,100 +15,141 @@ import {
 } from "@/components/ui/dialog";
 
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { validateDocument } from "@/utils/utils";
-import { Producer } from "@/types/producer.types";
+import { documentIsValid } from "@/utils/utils";
 import { useProducer } from "@/hooks/useProducer";
 import { useProducerContext } from "@/contexts/ProducerContext";
 
-// TODO: Trocar para usar o Form
+import {
+  Form,
+  FormItem,
+  FormField,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "../ui/form";
+
+const producerFormSchema = z
+  .object({
+    name: z.string().min(1, "Nome não pode ser vazio"),
+    document: z.string().min(2, "Documento não pode ser vazio"),
+  })
+  .refine((data) => documentIsValid(data.document), {
+    message: "O documento informado é inválido",
+    path: ["document"],
+  });
+
+type ProducerFormValues = z.infer<typeof producerFormSchema>;
 
 export function ProducerFormModal() {
-  const producer: Producer | null = null;
-
   const ctxProducer = useProducerContext();
 
-  const [name, setName] = useState("");
-  const [document, setDocument] = useState("");
-  const [documentError, setDocumentError] = useState("");
+  const { createProducerMutation, updateProducerMutation } = useProducer();
 
-  const { createProducerMutation } = useProducer();
+  const form = useForm<ProducerFormValues>({
+    resolver: zodResolver(producerFormSchema),
+    defaultValues: {
+      name: "",
+      document: "",
+    },
+  });
 
-  const handleDocumentChange = (value: string) => {
-    setDocument(value);
-    setDocumentError("");
-  };
-
-  const handleSubmit = async () => {
-    const error = validateDocument(document);
-
-    if (error) {
-      setDocumentError(error);
-      return;
+  async function onSubmit(values: ProducerFormValues) {
+    if (!ctxProducer.producerSelected) {
+      await createProducerMutation.mutateAsync({
+        name: values.name,
+        document: values.document.replace(/\D/g, ""),
+      });
     }
 
-    await createProducerMutation.mutateAsync({
-      name,
-      document: document.replace(/\D/g, ""),
-    });
+    if (ctxProducer.producerSelected) {
+      await updateProducerMutation.mutateAsync({
+        id: ctxProducer.producerSelected.id,
+        name: values.name,
+        document: values.document.replace(/\D/g, ""),
+      });
+    }
 
     ctxProducer.setProducerModalOpen(false);
-  };
+
+    form.reset();
+  }
+
+  useEffect(() => {
+    form.reset();
+    form.setValue("name", ctxProducer.producerSelected?.name ?? "");
+    form.setValue("document", ctxProducer.producerSelected?.document ?? "");
+  }, [ctxProducer.producerSelected, form]);
 
   return (
     <Dialog
       open={ctxProducer.producerModalOpen}
       onOpenChange={ctxProducer.setProducerModalOpen}
     >
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>
-            {producer ? "Editar Produtor" : "Novo Produtor"}
+            {ctxProducer.producerSelected ? "Editar Produtor" : "Novo Produtor"}
           </DialogTitle>
           <DialogDescription>
-            {producer
+            {ctxProducer.producerSelected
               ? "Edite as informações do produtor rural"
               : "Preencha as informações para cadastrar um novo produtor rural"}
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid gap-2">
-            <Label htmlFor="name">Nome</Label>
-            <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nome do produtor"
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="document">CPF/CNPJ</Label>
-            <Input
-              id="document"
-              value={document}
-              onChange={(e) => handleDocumentChange(e.target.value)}
-              placeholder="CPF ou CNPJ do produtor"
-              className={documentError ? "border-red-500" : ""}
-            />
-            {documentError && (
-              <p className="text-sm text-red-500">{documentError}</p>
-            )}
-          </div>
-        </div>
+        <Form {...form}>
+          <form>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Nome</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Nome do produtor" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <div className="grid gap-2">
+                <FormField
+                  control={form.control}
+                  name="document"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>CPF/CNPJ</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="Digite o CPF ou CNPJ" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          </form>
+        </Form>
         <DialogFooter>
           <Button
+            type="button"
             variant="outline"
-            onClick={() => ctxProducer.setProducerModalOpen(false)}
+            onClick={() => {
+              ctxProducer.setProducerSelected(null);
+              ctxProducer.setProducerModalOpen(false);
+            }}
           >
             Cancelar
           </Button>
           <Button
-            onClick={handleSubmit}
-            disabled={!name || !document || !!documentError}
+            type="submit"
             className="bg-green-600 hover:bg-green-700"
+            onClick={form.handleSubmit(onSubmit)}
           >
-            Salvar
+            {ctxProducer.producerSelected ? "Atualizar" : "Cadastrar"}
           </Button>
         </DialogFooter>
       </DialogContent>

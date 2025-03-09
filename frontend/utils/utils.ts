@@ -20,18 +20,18 @@ export function formatDocument(document: string | undefined): string {
   return document;
 }
 
-export function validateDocument(document: string): string {
+export function documentIsValid(document: string): boolean {
   const cleanDoc = document.replace(/\D/g, "");
 
   if (cleanDoc.length === 11) {
-    return validateCPF(cleanDoc) ? "" : "CPF inválido";
+    return validateCPF(cleanDoc);
   }
 
   if (cleanDoc.length === 14) {
-    return validateCNPJ(cleanDoc) ? "" : "CNPJ inválido";
+    return validateCNPJ(cleanDoc);
   }
 
-  return "Documento inválido";
+  return false;
 }
 
 export function validateCPF(document: string): boolean {
