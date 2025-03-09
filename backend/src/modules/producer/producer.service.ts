@@ -39,16 +39,16 @@ export class ProducerService {
     return this.producerRepository.save(producer);
   }
 
-  async update(id: string, producer: Partial<Producer>): Promise<Producer> {
-    // const existingProducer = await this.producerRepository.findOne({
-    //   where: { id },
-    // });
-    // if (!existingProducer) {
-    //   throw new NotFoundException('Produtor não encontrado');
-    // }
-    // Object.assign(existingProducer, producer);
-    // return this.producerRepository.save(existingProducer);
-    throw new Error('Method not implemented.');
+  async update(id: string, producer: Partial<Producer>): Promise<void> {
+    const existingProducer = await this.producerRepository.findOne({
+      where: { id },
+    });
+
+    if (!existingProducer) {
+      throw new NotFoundException('Produtor não encontrado');
+    }
+
+    await this.producerRepository.update(id, producer);
   }
 
   async delete(id: string): Promise<void> {
