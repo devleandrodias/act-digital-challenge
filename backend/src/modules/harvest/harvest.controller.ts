@@ -3,7 +3,7 @@ import {
   Put,
   Body,
   Post,
-  Query,
+  Param,
   Delete,
   Controller,
 } from '@nestjs/common';
@@ -16,13 +16,13 @@ export class HarvestController {
   constructor(private readonly harvestService: HarvestService) {}
 
   @Get(':farmId')
-  async getHarvestsByFarmId(@Query() { farmId }: { farmId: string }) {
+  async getHarvestsByFarmId(@Param() { farmId }: { farmId: string }) {
     return this.harvestService.findAllByFarm(farmId);
   }
 
   @Post(':farmId')
   async createHarvest(
-    @Query() { farmId }: { farmId: string },
+    @Param() { farmId }: { farmId: string },
     @Body() harvestDto: CreateHarvestDto,
   ) {
     return this.harvestService.create(farmId, harvestDto);
@@ -30,14 +30,14 @@ export class HarvestController {
 
   @Put(':harvestId')
   async updateHarvest(
-    @Query() { harvestId }: { harvestId: string },
+    @Param() { harvestId }: { harvestId: string },
     @Body() harvestDto: CreateHarvestDto,
   ) {
     return this.harvestService.update(harvestId, harvestDto);
   }
 
   @Delete(':harvestId')
-  async deleteHarvest(@Query() { harvestId }: { harvestId: string }) {
+  async deleteHarvest(@Param() { harvestId }: { harvestId: string }) {
     return this.harvestService.delete(harvestId);
   }
 }

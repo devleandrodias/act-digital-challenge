@@ -3,7 +3,7 @@ import {
   Get,
   Post,
   Body,
-  Query,
+  Param,
   Delete,
   Controller,
 } from '@nestjs/common';
@@ -17,14 +17,14 @@ export class FarmController {
   constructor(private readonly farmService: FarmService) {}
 
   @Get(':producerId')
-  async findAll(@Query() { producerId }: { producerId: string }) {
+  async findAll(@Param() { producerId }: { producerId: string }) {
     return this.farmService.findAllByProducer(producerId);
   }
 
   @Post(':producerId')
   async create(
     @Body() farmDto: CreateFarmDto,
-    @Query() { producerId }: { producerId: string },
+    @Param() { producerId }: { producerId: string },
   ) {
     return this.farmService.create(producerId, farmDto);
   }
@@ -32,13 +32,13 @@ export class FarmController {
   @Put(':farmId')
   async update(
     @Body() farmDto: UpdateFarmDto,
-    @Query() { farmId }: { farmId: string },
+    @Param() { farmId }: { farmId: string },
   ) {
     return this.farmService.update(farmId, farmDto);
   }
 
   @Delete(':farmId')
-  async delete(@Query() { farmId }: { farmId: string }) {
+  async delete(@Param() { farmId }: { farmId: string }) {
     return this.farmService.delete(farmId);
   }
 }
