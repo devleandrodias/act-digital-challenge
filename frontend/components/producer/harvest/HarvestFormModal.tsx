@@ -1,26 +1,33 @@
 "use client";
 
+import { X } from "lucide-react";
 import { useState } from "react";
+
 import {
   Dialog,
-  DialogContent,
-  DialogDescription,
+  DialogTitle,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogContent,
+  DialogDescription,
 } from "@/components/ui/dialog";
+
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { X } from "lucide-react";
 import { commonCrops } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
+import { useProducerContext } from "@/contexts/ProducerContext";
 
 export function HarvestModal() {
+  const ctxProducer = useProducerContext();
+
   const [year, setYear] = useState(new Date().getFullYear().toString());
+
   const [selectedCrops, setSelectedCrops] = useState<
     Array<{ id: number; name: string }>
   >([]);
+
   const [newCrop, setNewCrop] = useState("");
 
   const handleAddCrop = () => {
@@ -67,7 +74,7 @@ export function HarvestModal() {
   };
 
   return (
-    <Dialog open onOpenChange={() => {}}>
+    <Dialog open={false} onOpenChange={() => {}}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Nova Safra</DialogTitle>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Farm } from "@/types/farm.types";
 import {
   PieChart,
   Pie,
@@ -8,17 +9,16 @@ import {
   Legend,
   Tooltip,
 } from "recharts";
-import type { Farm } from "@/lib/types";
 
 interface FarmCropsChartProps {
-  farm: Farm;
+  farm: Farm | null;
 }
 
 export function FarmCropsChart({ farm }: FarmCropsChartProps) {
   // Count crops
   const cropCount: Record<string, number> = {};
 
-  farm.harvests.forEach((harvest) => {
+  farm?.harvests.forEach((harvest) => {
     harvest.crops.forEach((crop) => {
       cropCount[crop.name] = (cropCount[crop.name] || 0) + 1;
     });

@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import {
@@ -6,68 +8,65 @@ import {
   updateProducer,
 } from "@/services/producer.service";
 
+import {
+  CreateProducerInput,
+  UpdateProducerInput,
+} from "@/types/producer.types";
+
 export function useProducer() {
   const queryClient = useQueryClient();
 
   const createProducerMutation = useMutation({
-    mutationFn: (producer: any) => createProducer(producer),
+    mutationFn: (producer: CreateProducerInput) => createProducer(producer),
     onSuccess: () => {
-      //   toast({
-      //     title: "Mensagem excluída com sucesso",
-      //     description: "Seu mensagem foi excluída com sucesso",
-      //   });
+      toast.success("Novo produtor criado com sucesso", {
+        description: "Operação realizada com sucesso",
+      });
 
       queryClient.invalidateQueries({
         queryKey: ["producerData"],
       });
     },
     onError: () => {
-      //   toast({
-      //     title: "Erro ao excluir mensagem",
-      //     description: "Tente novamente mais tarde",
-      //     variant: "destructive",
-      //   });
+      toast.error("Erro ao criar novo produtor", {
+        description: "Tente novamente mais tarde",
+      });
     },
   });
 
   const updateProducerMutation = useMutation({
-    mutationFn: (producer: any) => updateProducer(producer),
+    mutationFn: (producer: UpdateProducerInput) => updateProducer(producer),
     onSuccess: () => {
-      //   toast({
-      //     title: "Mensagem excluída com sucesso",
-      //     description: "Seu mensagem foi excluída com sucesso",
-      //   });
+      toast.success("Produtor atualizado com sucesso", {
+        description: "Operação realizada com sucesso",
+      });
 
       queryClient.invalidateQueries({
         queryKey: ["producerData"],
       });
     },
     onError: () => {
-      //   toast({
-      //     title: "Erro ao excluir mensagem",
-      //     description: "Tente novamente mais tarde",
-      //     variant: "destructive",
-      //   });
+      toast.error("Erro ao atualizar produtor", {
+        description: "Tente novamente mais tarde",
+      });
     },
   });
 
   const deleteProducerMutation = useMutation({
     mutationFn: (producerId: string) => deleteProducer(producerId),
     onSuccess: () => {
-      //   toast({
-      //     title: "Mensagem excluída com sucesso",
-      //     description: "Seu mensagem foi excluída com sucesso",
-      //   });
+      toast.success("Produtor excluído com sucesso", {
+        description: "Operação realizada com sucesso",
+      });
+
       queryClient.invalidateQueries({
         queryKey: ["producerData"],
       });
     },
     onError: () => {
-      //   toast({
-      //     title: "Erro ao excluir mensagem",
-      //     description: "Tente novamente mais tarde",
-      //     variant: "destructive",
-      //   });
+      toast.error("Erro ao excluir produtor", {
+        description: "Tente novamente mais tarde",
+      });
     },
   });
 

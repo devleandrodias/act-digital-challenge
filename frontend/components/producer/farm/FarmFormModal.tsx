@@ -23,9 +23,9 @@ import {
   SelectTrigger,
 } from "@/components/ui/select";
 
+import { useFarm } from "@/hooks/useFarm";
 import { brazilianStates } from "@/lib/constants";
 import { useProducerContext } from "@/contexts/ProducerContext";
-import { useFarm } from "@/hooks/useFarm";
 
 export function FarmFormModal() {
   const [name, setName] = useState("");
@@ -89,8 +89,8 @@ export function FarmFormModal() {
 
   return (
     <Dialog
-      open={ctxProducer.farmModalOpen}
-      onOpenChange={ctxProducer.setFarmModalOpen}
+      open={ctxProducer.farmFormModalOpen}
+      onOpenChange={ctxProducer.setFarmFormModalOpen}
     >
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
@@ -194,7 +194,10 @@ export function FarmFormModal() {
         <DialogFooter>
           <Button
             variant="outline"
-            onClick={() => ctxProducer.setFarmModalOpen(false)}
+            onClick={() => {
+              ctxProducer.setFarmFormModalOpen(false);
+              ctxProducer.setFarmSelected(null);
+            }}
           >
             Cancelar
           </Button>

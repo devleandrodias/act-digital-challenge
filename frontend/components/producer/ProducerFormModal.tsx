@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import {
   Dialog,
@@ -14,12 +14,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { useProducer } from "@/hooks/useProducer";
 import { validateDocument } from "@/utils/utils";
+import { Producer } from "@/types/producer.types";
+import { useProducer } from "@/hooks/useProducer";
 import { useProducerContext } from "@/contexts/ProducerContext";
-import { Producer } from "@/lib/types";
 
-export function ProducerModal() {
+// TODO: Trocar para usar o Form
+
+export function ProducerFormModal() {
   const producer: Producer | null = null;
 
   const ctxProducer = useProducerContext();

@@ -4,7 +4,9 @@ import { cnpj, cpf } from "cpf-cnpj-validator";
 
 import { clsx, type ClassValue } from "clsx";
 
-export function formatDocument(document: string): string {
+export function formatDocument(document: string | undefined): string {
+  if (!document) return "";
+
   const cleanDoc = document.replace(/\D/g, "");
 
   if (cleanDoc.length === 11) {

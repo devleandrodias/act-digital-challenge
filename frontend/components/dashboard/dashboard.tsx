@@ -12,19 +12,24 @@ import {
 } from "@/components/ui/card";
 
 import { Button } from "@/components/ui/button";
-import { CropChart } from "@/components/charts/crop-chart";
-import { StateChart } from "@/components/charts/state-chart";
-import { LandUseChart } from "@/components/charts/land-use-chart";
-import { ProducerModal } from "@/components/producers/producer-modal";
-import { ProducerListCards } from "@/components/producers/producer-list-cards";
+
+import { CropChart } from "@/components/dashboard/charts/DashboardCropChart";
+import { StateChart } from "@/components/dashboard/charts/DashboardStateChart";
+import { LandUseChart } from "@/components/dashboard/charts/DashboardLandUseChart";
+
+import { ProducerFormModal } from "@/components/producer/ProducerFormModal";
+import { ProducerListCards } from "@/components/producer/ProducerListCards";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { getDashboardData } from "@/services/dashboard.service";
 import { useProducerContext } from "@/contexts/ProducerContext";
 
-import { Pending } from "./penfing";
-import { ErrorMessage } from "./error";
-import { FarmFormModal } from "./farm/farm-form-modal";
+import { Pending } from "../penfing";
+import { ErrorMessage } from "../error";
+import { FarmFormModal } from "../producer/farm/FarmFormModal";
+import { FarmListModal } from "../producer/farm/FarmListModal";
+import { FarmDetailsModal } from "../producer/farm/FarmDetailsModal";
 
 export default function Dashboard() {
   const ctxProducer = useProducerContext();
@@ -187,8 +192,11 @@ export default function Dashboard() {
         </Tabs>
       </div>
 
-      <ProducerModal />
       <FarmFormModal />
+      <FarmListModal />
+      <FarmDetailsModal />
+
+      <ProducerFormModal />
     </div>
   );
 }

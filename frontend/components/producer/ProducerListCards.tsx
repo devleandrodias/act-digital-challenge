@@ -3,11 +3,13 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { getProducers } from "@/services/producer.service";
-import { HarvestModal } from "@/components/harvest/harvest-modal";
-import { ProducerCard } from "@/components/producers/producer-card";
+import { ProducerCard } from "@/components/producer/ProducerCard";
+
+import { Pending } from "../penfing";
+import { ErrorMessage } from "../error";
 
 export function ProducerListCards() {
-  const { data, isPending, isError } = useQuery<any>({
+  const { data, isPending, isError } = useQuery({
     retry: 2,
     queryKey: ["producerData"],
     queryFn: () => {
@@ -16,29 +18,27 @@ export function ProducerListCards() {
   });
 
   if (isPending) {
-    return <div>Loading...</div>;
+    return <Pending />;
   }
 
   if (isError) {
-    return <div>Error</div>;
+    return <ErrorMessage message="Erro ao carregar produtores" />;
   }
 
   return (
     <div>
       <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {data.data.data.map((producer: any) => (
+        {data.data.data.map((producer) => (
           <ProducerCard key={producer.id} producer={producer} />
         ))}
       </div>
 
-      {data.data.length === 0 && (
+      {data.data.data.length === 0 && (
         <div className="text-center py-8 text-muted-foreground">
           Nenhum produtor cadastrado. Clique em <strong>Novo Produtor</strong>{" "}
           para começar.
         </div>
       )}
-
-      <HarvestModal />
     </div>
   );
 }

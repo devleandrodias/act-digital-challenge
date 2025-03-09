@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import Dashboard from "@/components/dashboard";
+
+import Dashboard from "@/components/dashboard/dashboard";
+import { Toaster } from "@/components/ui/sonner";
 import { ProducerProvider } from "@/contexts/ProducerContext";
 
 export const metadata: Metadata = {
@@ -13,6 +15,7 @@ export default function Home() {
       <main className="flex-1">
         <ProducerProvider>
           <Dashboard />
+          <Toaster />
         </ProducerProvider>
       </main>
     </div>
