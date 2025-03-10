@@ -1,6 +1,7 @@
 services:
   postgres:
     image: postgres:latest
+    container_name: postgres_db
     environment:
       POSTGRES_USER: "brain_user"     
       POSTGRES_PASSWORD: "brain@2025"
