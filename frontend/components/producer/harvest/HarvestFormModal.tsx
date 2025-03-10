@@ -89,7 +89,6 @@ export function HarvestModal() {
       }
 
       if (ctxProducer.harvestSelected) {
-        console.log("update harvest", ctxProducer.harvestSelected);
         await updateHarvestMutation.mutateAsync({
           year: Number(values.year),
           crops: values.crops,
@@ -97,6 +96,7 @@ export function HarvestModal() {
         });
       }
 
+      ctxProducer.setFarmDetailModalOpen(false);
       ctxProducer.setHarvestModalOpen(false);
     }
   }
@@ -220,7 +220,9 @@ export function HarvestModal() {
               <Button
                 type="submit"
                 className="bg-green-600 hover:bg-green-700"
-                disabled={form.formState.isSubmitting}
+                onClick={() => {
+                  form.handleSubmit(onSubmit);
+                }}
               >
                 {ctxProducer.harvestSelected ? "Atualizar" : "Salvar"}
               </Button>

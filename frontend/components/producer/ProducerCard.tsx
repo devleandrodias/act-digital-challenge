@@ -116,7 +116,7 @@ export function ProducerCard({ producer }: ProducerCardProps) {
               {producer.farms.length > 0 ? (
                 <div className="space-y-2 border rounded-md p-2">
                   {producer.farms.map((farm) => (
-                    <FarmCard key={farm.id} farm={farm} />
+                    <FarmCard key={farm.id} farm={farm} producer={producer} />
                   ))}
                 </div>
               ) : (

@@ -4,11 +4,12 @@ import { useState } from "react";
 
 import {
   Sprout,
+  Pencil,
+  Trash2,
   PieChart,
   BarChart3,
   PlusCircle,
   CalendarDays,
-  Pencil,
 } from "lucide-react";
 
 import {
@@ -20,6 +21,7 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Harvest } from "@/types/harvest.types";
+import { useHarvest } from "@/hooks/useHarvest";
 import { useProducerContext } from "@/contexts/ProducerContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
@@ -31,9 +33,16 @@ import { FarmCropsChart } from "./charts/ProducerFarmCropsChart";
 export function FarmDetailsModal() {
   const ctxProducer = useProducerContext();
 
+  const { deleteHarvestMutation } = useHarvest();
+
   const [activeTab, setActiveTab] = useState("details");
 
   const existsHarvest = !!ctxProducer.farmSelected?.harvests.length;
+
+  const handleDeleteHarvest = async (harvest: Harvest) => {
+    await deleteHarvestMutation.mutateAsync(harvest.id);
+    ctxProducer.setFarmDetailModalOpen(false);
+  };
 
   const handleEditHarvest = (harvest: Harvest) => {
     ctxProducer.setHarvestModalOpen(true);
@@ -171,15 +180,26 @@ export function FarmDetailsModal() {
                           <Sprout className="h-4 w-4 text-green-600" />
                           <h6 className="font-medium">Safra {harvest.year}</h6>
                         </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-green-700"
-                          onClick={() => handleEditHarvest(harvest)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                          <span className="sr-only">Editar safra</span>
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-green-700"
+                            onClick={() => handleEditHarvest(harvest)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Editar safra</span>
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-red-700"
+                            onClick={() => handleDeleteHarvest(harvest)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                            <span className="sr-only">Excluir safra</span>
+                          </Button>
+                        </div>
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {harvest.crops.map((crop) => (
@@ -202,15 +222,6 @@ export function FarmDetailsModal() {
               ) : (
                 <div className="text-center py-8 border rounded-md text-muted-foreground">
                   <p>Nenhuma safra cadastrada</p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="mt-2"
-                    onClick={handleAddHarvest}
-                  >
-                    <PlusCircle className="mr-1 h-4 w-4" />
-                    Adicionar Safra
-                  </Button>
                 </div>
               )}
             </div>

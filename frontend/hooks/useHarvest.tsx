@@ -54,6 +54,10 @@ export function useHarvest() {
       toast.success("Safra deletada com sucesso", {
         description: "Operação realizada com sucesso",
       });
+
+      queryClient.invalidateQueries({
+        queryKey: ["producerData"],
+      });
     },
     onError: () => {
       toast.error("Erro ao deletar a safra", {

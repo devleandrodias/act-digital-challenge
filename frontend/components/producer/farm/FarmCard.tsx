@@ -22,9 +22,15 @@ import {
 import { Farm } from "@/types/farm.types";
 import { useFarm } from "@/hooks/useFarm";
 import { Button } from "@/components/ui/button";
+import { Producer } from "@/types/producer.types";
 import { useProducerContext } from "@/contexts/ProducerContext";
 
-export function FarmCard({ farm }: { farm: Farm }) {
+type FarmCardProps = {
+  farm: Farm;
+  producer: Producer;
+};
+
+export function FarmCard({ farm, producer }: FarmCardProps) {
   const ctxProducer = useProducerContext();
 
   const { deleteFarmMutation } = useFarm();
@@ -32,11 +38,13 @@ export function FarmCard({ farm }: { farm: Farm }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const handleViewFarm = (farm: Farm) => {
+    ctxProducer.setProducerSelected(producer);
     ctxProducer.setFarmDetailModalOpen(true);
     ctxProducer.setFarmSelected(farm);
   };
 
   const handleEditFarm = (farm: Farm) => {
+    ctxProducer.setProducerSelected(producer);
     ctxProducer.setFarmFormModalOpen(true);
     ctxProducer.setFarmSelected(farm);
   };
