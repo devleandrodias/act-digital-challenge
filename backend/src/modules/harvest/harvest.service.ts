@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { Farm } from '@modules/farm/farm.entity';
+import { Crop } from '@modules/crop/crop.entity';
 
 import { Harvest } from './harvest.entity';
 import { CreateHarvestDto } from './dtos/createHarvest.dto';
@@ -14,6 +15,8 @@ export class HarvestService {
     private harvestRepository: Repository<Harvest>,
     @InjectRepository(Farm)
     private farmRepository: Repository<Farm>,
+    @InjectRepository(Crop)
+    private cropRepository: Repository<Crop>,
   ) {}
 
   async findAllByFarm(farmId: string): Promise<Harvest[]> {
@@ -51,12 +54,38 @@ export class HarvestService {
   ): Promise<Harvest> {
     const harvest = await this.harvestRepository.findOne({
       where: { id: harvestId },
+      relations: ['crops'],
     });
+
     if (!harvest) {
       throw new NotFoundException('Colheita não encontrada');
     }
 
-    return this.harvestRepository.save({ ...harvest, ...harvestDto });
+    const existingCrops = new Map(
+      harvest.crops.map((crop) => [crop.name, crop]),
+    );
+
+    const updatedCrops = new Set(harvestDto.crops.map((crop) => crop.name));
+
+    const cropsToRemove = harvest.crops.filter(
+      (crop) => !updatedCrops.has(crop.name),
+    );
+
+    const cropsToAdd = harvestDto.crops
+      .filter((crop) => !existingCrops.has(crop.name))
+      .map((crop) => this.cropRepository.create({ name: crop.name, harvest }));
+
+    if (cropsToRemove.length > 0) {
+      await this.cropRepository.remove(cropsToRemove);
+    }
+
+    if (cropsToAdd.length > 0) {
+      await this.cropRepository.save(cropsToAdd);
+    }
+
+    Object.assign(harvest, harvestDto);
+
+    return this.harvestRepository.save(harvest);
   }
 
   async delete(harvestId: string): Promise<void> {
