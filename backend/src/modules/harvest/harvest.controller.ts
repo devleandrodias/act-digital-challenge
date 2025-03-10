@@ -8,7 +8,7 @@ import {
   Controller,
 } from '@nestjs/common';
 
-import { HarvestService } from './harvest.service';
+import { HarvestService } from './services/harvest.service';
 import { CreateHarvestDto } from './dtos/createHarvest.dto';
 
 @Controller('harvests')

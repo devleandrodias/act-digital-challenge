@@ -5,7 +5,7 @@ import { Harvest } from './harvest.entity';
 import { Crop } from '../crop/crop.entity';
 import { Farm } from '../farm/farm.entity';
 
-import { HarvestService } from './harvest.service';
+import { HarvestService } from './services/harvest.service';
 import { HarvestController } from './harvest.controller';
 
 @Module({
