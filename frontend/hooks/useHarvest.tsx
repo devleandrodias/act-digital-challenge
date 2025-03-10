@@ -20,7 +20,7 @@ export function useHarvest() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
@@ -38,7 +38,7 @@ export function useHarvest() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
@@ -56,7 +56,7 @@ export function useHarvest() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {

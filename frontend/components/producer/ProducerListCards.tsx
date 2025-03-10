@@ -11,7 +11,7 @@ import { ErrorMessage } from "../error";
 export function ProducerListCards() {
   const { data, isPending, isError } = useQuery({
     retry: 2,
-    queryKey: ["producerData"],
+    queryKey: ["producerData", "dashboardData"],
     queryFn: () => {
       return getProducers();
     },

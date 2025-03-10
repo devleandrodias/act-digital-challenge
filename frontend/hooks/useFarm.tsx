@@ -15,7 +15,7 @@ export function useFarm() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
@@ -32,7 +32,7 @@ export function useFarm() {
         description: "Operação realizada com sucesso",
       });
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
@@ -49,7 +49,7 @@ export function useFarm() {
         description: "Operação realizada com sucesso",
       });
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {

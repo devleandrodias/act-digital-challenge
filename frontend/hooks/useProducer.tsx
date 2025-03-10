@@ -24,7 +24,7 @@ export function useProducer() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
@@ -42,7 +42,7 @@ export function useProducer() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
@@ -60,7 +60,7 @@ export function useProducer() {
       });
 
       queryClient.invalidateQueries({
-        queryKey: ["producerData"],
+        queryKey: ["producerData", "dashboardData"],
       });
     },
     onError: () => {
