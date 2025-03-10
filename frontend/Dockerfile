@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 # Instala as dependências do projeto
-RUN npm install --production
+RUN npm install
 
 # Copia todo o código da aplicação para dentro do contêiner
 COPY . .
@@ -16,8 +16,8 @@ COPY . .
 # Define a variável de ambiente para produção
 ENV NODE_ENV=production
 
-# Expõe a porta da aplicação
+# Expõe a porta padrão do Next.js
 EXPOSE 3000
 
-# Comando para iniciar a API
-CMD ["npm", "run", "start"]
+# Comando para iniciar o frontend
+CMD ["npm", "run", "dev"]

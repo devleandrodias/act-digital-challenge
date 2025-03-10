@@ -10,6 +10,8 @@ services:
     ports:
       - "5432:5432"                     
     restart: on-failure                
+    networks:
+      - agnetwork
 
   backend:
     build:
@@ -20,12 +22,17 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://brain:brain@2025@postgres:5432/agriculture
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: brain_user
+      DB_PASSWORD: brain@2025
+      DB_DATABASE: agriculture
     ports:
       - "3000:3000"
     volumes:
       - ./backend:/app
-    command: ["npm", "run", "start:prod"]
+    networks:
+      - agnetwork
 
   frontend:
     build:
@@ -36,10 +43,15 @@ services:
     depends_on:
       - backend
     ports:
-      - "3001:3000"
+      - "4000:3000"
     volumes:
       - ./frontend:/app
-    command: ["npm", "run", "start"]
+    networks:
+      - agnetwork
 
 volumes:
   postgres_data:
+
+networks:
+  agnetwork:
+    driver: bridge
