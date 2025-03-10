@@ -66,7 +66,7 @@ Isso iniciará os serviços **backend, frontend e banco de dados PostgreSQL**.
 
 - **API Backend**: `http://localhost:3000`
 - **Documentação Swagger**: `http://localhost:3000/api`
-- **Frontend Next.js**: `http://localhost:3001`
+- **Frontend Next.js**: `http://localhost:4000`
 - **Banco de Dados (PostgreSQL)**: `localhost:5432`
 
 ---
