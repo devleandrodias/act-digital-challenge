@@ -30,6 +30,7 @@ import { ErrorMessage } from "../error";
 import { FarmFormModal } from "../producer/farm/FarmFormModal";
 import { FarmListModal } from "../producer/farm/FarmListModal";
 import { FarmDetailsModal } from "../producer/farm/FarmDetailsModal";
+import { HarvestModal } from "../producer/harvest/HarvestFormModal";
 
 export default function Dashboard() {
   const ctxProducer = useProducerContext();
@@ -196,11 +197,13 @@ export default function Dashboard() {
         </Tabs>
       </div>
 
+      <ProducerFormModal />
+
       <FarmFormModal />
       <FarmListModal />
       <FarmDetailsModal />
 
-      <ProducerFormModal />
+      <HarvestModal />
     </div>
   );
 }

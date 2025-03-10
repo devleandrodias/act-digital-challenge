@@ -1,12 +1,14 @@
+"use client";
+
 import { useState } from "react";
 
 import {
-  Badge,
   Sprout,
   PieChart,
   BarChart3,
   PlusCircle,
   CalendarDays,
+  Pencil,
 } from "lucide-react";
 
 import {
@@ -16,13 +18,15 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 
+import { Badge } from "@/components/ui/badge";
+import { Harvest } from "@/types/harvest.types";
+import { useProducerContext } from "@/contexts/ProducerContext";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
 import { Button } from "../../ui/button";
 import { DialogHeader, DialogFooter } from "../../ui/dialog";
 import { FarmAreaChart } from "./charts/ProducerFarmAreaChart";
 import { FarmCropsChart } from "./charts/ProducerFarmCropsChart";
-import { useProducerContext } from "@/contexts/ProducerContext";
 
 export function FarmDetailsModal() {
   const ctxProducer = useProducerContext();
@@ -30,6 +34,16 @@ export function FarmDetailsModal() {
   const [activeTab, setActiveTab] = useState("details");
 
   const existsHarvest = !!ctxProducer.farmSelected?.harvests.length;
+
+  const handleEditHarvest = (harvest: Harvest) => {
+    ctxProducer.setHarvestModalOpen(true);
+    ctxProducer.setHarvestSelected(harvest);
+  };
+
+  const handleAddHarvest = () => {
+    ctxProducer.setHarvestModalOpen(true);
+    ctxProducer.setHarvestSelected(null);
+  };
 
   return (
     <Dialog
@@ -47,15 +61,6 @@ export function FarmDetailsModal() {
               {ctxProducer.farmSelected?.state}
             </DialogDescription>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-8"
-            onClick={() => {}}
-          >
-            <PlusCircle className="mr-1 h-4 w-4" />
-            Nova Safra
-          </Button>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -75,6 +80,7 @@ export function FarmDetailsModal() {
             </TabsTrigger>
           </TabsList>
 
+          {/* Tab de detalhes da propriedade */}
           <TabsContent value="details" className="mt-0">
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div className="border rounded-md p-3">
@@ -112,15 +118,25 @@ export function FarmDetailsModal() {
             </div>
           </TabsContent>
 
+          {/* Tab de gráfico destribuição de áreas */}
           <TabsContent value="area" className="mt-0">
             <div className="border rounded-md p-4 bg-white">
               <h5 className="text-sm font-medium text-center mb-4">
                 Distribuição de Áreas
               </h5>
-              <FarmAreaChart farm={ctxProducer.farmSelected} />
+              <FarmAreaChart
+                totalArea={Number(ctxProducer.farmSelected?.totalArea ?? 0)}
+                vegetationArea={Number(
+                  ctxProducer.farmSelected?.vegetationArea ?? 0
+                )}
+                agriculturalArea={Number(
+                  ctxProducer.farmSelected?.agriculturalArea ?? 0
+                )}
+              />
             </div>
           </TabsContent>
 
+          {/* Tab de gráfico de culturas plantadas */}
           <TabsContent value="crops" className="mt-0">
             <div className="border rounded-md p-4 bg-white">
               <h5 className="text-sm font-medium text-center mb-4">
@@ -130,17 +146,40 @@ export function FarmDetailsModal() {
             </div>
           </TabsContent>
 
+          {/* Tab de safras e culturas */}
           <TabsContent value="harvests" className="mt-0">
             <div className="border rounded-md p-4">
-              <h5 className="text-sm font-medium mb-4">Safras e Culturas</h5>
+              <div className="flex justify-between items-center mb-4">
+                <h5 className="text-sm font-medium">Safras e Culturas</h5>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-green-700 hover:text-green-800 hover:bg-green-50"
+                  onClick={handleAddHarvest}
+                >
+                  <PlusCircle className="mr-1 h-4 w-4" />
+                  Nova Safra
+                </Button>
+              </div>
 
               {existsHarvest ? (
                 <div className="space-y-4">
                   {ctxProducer.farmSelected?.harvests.map((harvest) => (
                     <div key={harvest.id} className="border rounded-md p-3">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Sprout className="h-4 w-4 text-green-600" />
-                        <h6 className="font-medium">Safra {harvest.year}</h6>
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Sprout className="h-4 w-4 text-green-600" />
+                          <h6 className="font-medium">Safra {harvest.year}</h6>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-green-700"
+                          onClick={() => handleEditHarvest(harvest)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar safra</span>
+                        </Button>
                       </div>
                       <div className="flex flex-wrap gap-1 mt-2">
                         {harvest.crops.map((crop) => (
@@ -167,7 +206,7 @@ export function FarmDetailsModal() {
                     variant="outline"
                     size="sm"
                     className="mt-2"
-                    onClick={() => {}}
+                    onClick={handleAddHarvest}
                   >
                     <PlusCircle className="mr-1 h-4 w-4" />
                     Adicionar Safra

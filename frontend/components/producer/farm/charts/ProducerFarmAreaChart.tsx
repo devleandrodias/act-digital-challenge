@@ -1,7 +1,5 @@
 "use client";
 
-import { Farm } from "@/types/farm.types";
-
 import {
   Pie,
   Cell,
@@ -12,13 +10,16 @@ import {
 } from "recharts";
 
 interface FarmAreaChartProps {
-  farm: Farm | null;
+  totalArea: number;
+  vegetationArea: number;
+  agriculturalArea: number;
 }
 
-export function FarmAreaChart({ farm }: FarmAreaChartProps) {
-  const totallArea = farm?.totalArea ?? 0;
-  const vegetationArea = farm?.vegetationArea ?? 0;
-  const agriculturalArea = farm?.agriculturalArea ?? 0;
+export function FarmAreaChart(props: FarmAreaChartProps) {
+  const totallArea = props.totalArea;
+  const vegetationArea = props.vegetationArea;
+  const agriculturalArea = props.agriculturalArea;
+
   const unusedArea = Math.max(
     0,
     totallArea - agriculturalArea - vegetationArea

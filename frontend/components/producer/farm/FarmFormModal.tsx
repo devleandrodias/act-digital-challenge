@@ -61,8 +61,8 @@ export function FarmFormModal() {
       city: "",
       state: "",
       totalArea: "",
-      agriculturalArea: "",
       vegetationArea: "",
+      agriculturalArea: "",
     },
   });
 
