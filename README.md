@@ -57,7 +57,7 @@ cd act-digital-challenge
 ### 2️⃣ **Suba os containers com Docker**
 
 ```sh
-docker-compose up --build
+docker compose up -d
 ```
 
 Isso iniciará os serviços **backend, frontend e banco de dados PostgreSQL**.
