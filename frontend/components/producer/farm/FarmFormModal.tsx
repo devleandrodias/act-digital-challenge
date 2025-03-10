@@ -38,14 +38,28 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const farmFormSchema = z.object({
-  name: z.string().min(1, "Nome não pode ser vazio"),
-  city: z.string().min(1, "Cidade não pode ser vazio"),
-  state: z.string().min(1, "Estado não pode ser vazio"),
-  totalArea: z.string().min(1, "Área total não pode ser vazio"),
-  agriculturalArea: z.string().min(1, "Área agrícola não pode ser vazio"),
-  vegetationArea: z.string().min(1, "Área de vegetação não pode ser vazio"),
-});
+const farmFormSchema = z
+  .object({
+    name: z.string().min(1, "Nome não pode ser vazio"),
+    city: z.string().min(1, "Cidade não pode ser vazio"),
+    state: z.string().min(1, "Estado não pode ser vazio"),
+    totalArea: z.string().min(1, "Área total não pode ser vazio"),
+    agriculturalArea: z.string().min(1, "Área agrícola não pode ser vazio"),
+    vegetationArea: z.string().min(1, "Área de vegetação não pode ser vazio"),
+  })
+  .refine(
+    (data) => {
+      const totalArea = Number(data.totalArea);
+      const vegetationArea = Number(data.vegetationArea);
+      const agriculturalArea = Number(data.agriculturalArea);
+      return vegetationArea + agriculturalArea <= totalArea;
+    },
+    {
+      message:
+        "A soma da área vegetal e área agricultável não pode ser maior que a área total",
+      path: ["vegetationArea"],
+    }
+  );
 
 type FarmFormValues = z.infer<typeof farmFormSchema>;
 
@@ -179,7 +193,7 @@ export function FarmFormModal() {
                           defaultValue={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger id="state">
+                            <SelectTrigger id="state" className="w-full">
                               <SelectValue placeholder="Selecione" />
                             </SelectTrigger>
                           </FormControl>

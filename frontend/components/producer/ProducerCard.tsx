@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 
-import { Trash2, MapPin, Tractor, PenSquare, Eye } from "lucide-react";
+import {
+  Trash2,
+  MapPin,
+  Tractor,
+  PenSquare,
+  ChevronDown,
+  ChevronUp,
+  PlusCircle,
+} from "lucide-react";
 
 import {
   Dialog,
@@ -16,9 +24,15 @@ import {
 import { formatDocument } from "@/utils/utils";
 import { Button } from "@/components/ui/button";
 import { useProducer } from "@/hooks/useProducer";
-import { Producer } from "@/types/producer.types";
+import type { Producer } from "@/types/producer.types";
 import { useProducerContext } from "@/contexts/ProducerContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { FarmCard } from "./farm/FarmCard";
 
 interface ProducerCardProps {
   producer: Producer;
@@ -30,6 +44,7 @@ export function ProducerCard({ producer }: ProducerCardProps) {
   const { deleteProducerMutation } = useProducer();
 
   const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const totalArea = producer.farms.reduce(
     (total, farm) => total + Number(farm.totalArea),
@@ -38,11 +53,6 @@ export function ProducerCard({ producer }: ProducerCardProps) {
 
   const handleOpenChange = (open: boolean) => {
     ctxProducer.setProducerModalOpen(open);
-  };
-
-  const handleViewProducer = (producer: Producer) => {
-    ctxProducer.setFarmListModalOpen(true);
-    ctxProducer.setProducerSelected(producer);
   };
 
   const handleCancelDelete = () => {
@@ -55,14 +65,15 @@ export function ProducerCard({ producer }: ProducerCardProps) {
     setConfirmDelete(false);
   };
 
+  const handleAddFarm = () => {
+    ctxProducer.setProducerSelected(producer);
+    ctxProducer.setFarmFormModalOpen(true);
+  };
+
   return (
     <>
-      {/* Card de detalhe da fazenda */}
-      <Card className="border-green-100 overflow-hidden cursor-pointer hover:border-green-300 transition-colors relative">
-        <CardHeader
-          className="pb-2"
-          onClick={() => handleViewProducer(producer)}
-        >
+      <Card className="border-green-100 overflow-hidden hover:border-green-300 transition-colors relative w-full">
+        <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
             <div>
               <CardTitle className="text-lg font-bold text-green-800">
@@ -75,7 +86,7 @@ export function ProducerCard({ producer }: ProducerCardProps) {
           </div>
         </CardHeader>
         <CardContent className="pb-4">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-2 mb-2">
             <div className="flex items-center gap-2">
               <Tractor className="h-4 w-4 text-green-600" />
               <span className="text-sm">{producer.farms.length} fazendas</span>
@@ -85,24 +96,48 @@ export function ProducerCard({ producer }: ProducerCardProps) {
               <span className="text-sm">{totalArea} ha</span>
             </div>
           </div>
+
+          <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mt-4">
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center w-full justify-between"
+              >
+                <span>Propriedades</span>
+                {isOpen ? (
+                  <ChevronUp className="h-4 w-4" />
+                ) : (
+                  <ChevronDown className="h-4 w-4" />
+                )}
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2 space-y-2">
+              {producer.farms.length > 0 ? (
+                <div className="space-y-2 border rounded-md p-2">
+                  {producer.farms.map((farm) => (
+                    <FarmCard key={farm.id} farm={farm} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center text-sm text-muted-foreground py-4 border rounded-md">
+                  Nenhuma fazenda cadastrada
+                </div>
+              )}
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 mt-2"
+                size="sm"
+                onClick={handleAddFarm}
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Adicionar Fazenda
+              </Button>
+            </CollapsibleContent>
+          </Collapsible>
         </CardContent>
 
         {/* Botões de ação */}
         <div className="absolute top-2 right-2 flex gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8 hover:bg-green-50"
-            data-action-button="true"
-            title="Visualizar propriedades"
-            onClick={() => {
-              ctxProducer.setFarmListModalOpen(true);
-              ctxProducer.setProducerSelected(producer);
-            }}
-          >
-            <Eye className="h-4 w-4 text-green-700" />
-            <span className="sr-only">Visualizar</span>
-          </Button>
           <Button
             variant="ghost"
             size="icon"
@@ -125,6 +160,7 @@ export function ProducerCard({ producer }: ProducerCardProps) {
             title="Excluir produtor"
             onClick={() => {
               setConfirmDelete(true);
+              ctxProducer.setProducerSelected(producer);
             }}
           >
             <Trash2 className="h-4 w-4 text-red-600" />

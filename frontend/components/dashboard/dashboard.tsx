@@ -28,7 +28,6 @@ import { useProducerContext } from "@/contexts/ProducerContext";
 import { Pending } from "../penfing";
 import { ErrorMessage } from "../error";
 import { FarmFormModal } from "../producer/farm/FarmFormModal";
-import { FarmListModal } from "../producer/farm/FarmListModal";
 import { FarmDetailsModal } from "../producer/farm/FarmDetailsModal";
 import { HarvestModal } from "../producer/harvest/HarvestFormModal";
 
@@ -200,7 +199,6 @@ export default function Dashboard() {
       <ProducerFormModal />
 
       <FarmFormModal />
-      <FarmListModal />
       <FarmDetailsModal />
 
       <HarvestModal />
