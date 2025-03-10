@@ -11,7 +11,6 @@ import { UpdateCropDto } from '../dtos/updateCrop.dto';
 describe('CropService', () => {
   let service: CropService;
 
-  // Mocks para os repositórios de Harvest e Crop
   const mockHarvestRepository = {
     findOne: jest.fn(),
   };
@@ -46,9 +45,11 @@ describe('CropService', () => {
   describe('findAllByHarvest', () => {
     it('deve retornar todas as culturas para uma safra específica', async () => {
       const harvestId = 'harvest1';
+
       const crops: Crop[] = [
         { id: 'crop1', name: 'Trigo', harvest: { id: harvestId } as Harvest },
       ];
+
       mockCropRepository.find.mockResolvedValue(crops);
 
       const result = await service.findAllByHarvest(harvestId);

@@ -109,7 +109,7 @@ describe('FarmService', () => {
         totalArea: 100,
         agriculturalArea: 80,
         vegetationArea: 20,
-        harvests: [], // opcional
+        harvests: [],
       };
 
       const producer: Producer = {

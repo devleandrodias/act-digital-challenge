@@ -11,7 +11,6 @@ import { CreateHarvestDto } from '../dtos/createHarvest.dto';
 describe('HarvestService', () => {
   let service: HarvestService;
 
-  // Mocks para os repositórios
   const mockHarvestRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
@@ -172,15 +171,12 @@ describe('HarvestService', () => {
         relations: ['crops'],
       });
 
-      // Verifica se o cultivo "Maize" foi removido
       expect(mockCropRepository.remove).toHaveBeenCalledWith([existingCrop]);
-      // Verifica se o novo cultivo "Soybean" foi criado e salvo
       expect(mockCropRepository.create).toHaveBeenCalledWith({
         name: 'Soybean',
         harvest,
       });
       expect(mockCropRepository.save).toHaveBeenCalledWith([newCrop]);
-      // Verifica se a colheita foi atualizada
       expect(mockHarvestRepository.save).toHaveBeenCalledWith(
         Object.assign(harvest, updateDto),
       );
@@ -188,8 +184,7 @@ describe('HarvestService', () => {
     });
 
     it('deve atualizar a colheita sem alterar os cultivos quando não houver mudança', async () => {
-      // Colheita existente com cultivo "Maize"
-      const existingCrop = { id: 'crop1', name: 'Maize' };
+      const existingCrop = { id: 'crop1', name: 'Soja' };
       const harvest = {
         id: 'harv2',
         year: 2025,
@@ -197,15 +192,12 @@ describe('HarvestService', () => {
       } as Harvest;
       mockHarvestRepository.findOne.mockResolvedValue(harvest);
 
-      // DTO de atualização com o mesmo cultivo
       const updateDto: CreateHarvestDto = {
         year: 2025,
-        crops: [{ name: 'Maize' }],
+        crops: [{ name: 'Soja' }],
       };
 
-      // Simula que não há remoção ou adição de cultivos
       mockCropRepository.remove.mockResolvedValue(undefined);
-      // Para esse caso, não esperamos chamada do cropRepository.create nem cropRepository.save
       mockHarvestRepository.save.mockResolvedValue({
         ...harvest,
         ...updateDto,

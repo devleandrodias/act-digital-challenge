@@ -8,7 +8,6 @@ import { Crop } from '../../crop/crop.entity';
 describe('DashboardService', () => {
   let service: DashboardService;
 
-  // Mocks dos repositórios
   const mockFarmRepository = {
     count: jest.fn(),
     createQueryBuilder: jest.fn(),
@@ -33,11 +32,9 @@ describe('DashboardService', () => {
   });
 
   it('deve retornar os dados do dashboard corretamente', async () => {
-    // Simula as contagens
     mockFarmRepository.count.mockResolvedValue(8);
     mockCropRepository.count.mockResolvedValue(17);
 
-    // Mock para a query de totalAreaData
     const mockTotalAreaQueryBuilder = {
       select: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
@@ -48,7 +45,6 @@ describe('DashboardService', () => {
       }),
     };
 
-    // Mock para a query de farmsByState
     const mockFarmsByStateQueryBuilder = {
       select: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
@@ -59,7 +55,6 @@ describe('DashboardService', () => {
       ]),
     };
 
-    // Mock para a query de cropsByType
     const mockCropsByTypeQueryBuilder = {
       select: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
@@ -70,18 +65,14 @@ describe('DashboardService', () => {
       ]),
     };
 
-    // Configura o createQueryBuilder para farmRepository:
-    // A primeira chamada retorna totalAreaData e a segunda, farmsByState
     mockFarmRepository.createQueryBuilder
       .mockReturnValueOnce(mockTotalAreaQueryBuilder)
       .mockReturnValueOnce(mockFarmsByStateQueryBuilder);
 
-    // Configura o createQueryBuilder para cropRepository
     mockCropRepository.createQueryBuilder.mockReturnValue(
       mockCropsByTypeQueryBuilder,
     );
 
-    // Executa o método a ser testado
     const result = await service.getDashboardData();
 
     const expected = {
@@ -90,7 +81,7 @@ describe('DashboardService', () => {
       totalCrops: 17,
       agriculturalArea: 60,
       vegetationArea: 20,
-      unidentifiedArea: 100 - (60 + 20), // 20
+      unidentifiedArea: 100 - (60 + 20),
       farmsByState: [
         { name: 'State1', value: 5 },
         { name: 'State2', value: 3 },
@@ -103,7 +94,6 @@ describe('DashboardService', () => {
 
     expect(result).toEqual(expected);
 
-    // Verifica se os métodos count e createQueryBuilder foram chamados
     expect(mockFarmRepository.count).toHaveBeenCalled();
     expect(mockCropRepository.count).toHaveBeenCalled();
     expect(mockFarmRepository.createQueryBuilder).toHaveBeenCalledTimes(2);
@@ -111,18 +101,15 @@ describe('DashboardService', () => {
   });
 
   it('deve retornar zeros e arrays vazios quando não houver dados', async () => {
-    // Simula contagens zeradas
     mockFarmRepository.count.mockResolvedValue(0);
     mockCropRepository.count.mockResolvedValue(0);
 
-    // Mock para a query de totalAreaData sem valores (objeto vazio)
     const mockTotalAreaQueryBuilder = {
       select: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
       getRawOne: jest.fn().mockResolvedValue({}),
     };
 
-    // Mock para a query de farmsByState retornando array vazio
     const mockFarmsByStateQueryBuilder = {
       select: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
@@ -130,7 +117,6 @@ describe('DashboardService', () => {
       getRawMany: jest.fn().mockResolvedValue([]),
     };
 
-    // Mock para a query de cropsByType retornando array vazio
     const mockCropsByTypeQueryBuilder = {
       select: jest.fn().mockReturnThis(),
       addSelect: jest.fn().mockReturnThis(),
@@ -138,17 +124,14 @@ describe('DashboardService', () => {
       getRawMany: jest.fn().mockResolvedValue([]),
     };
 
-    // Configura os mocks para o farmRepository: primeiro para totalAreaData, depois para farmsByState
     mockFarmRepository.createQueryBuilder
       .mockReturnValueOnce(mockTotalAreaQueryBuilder)
       .mockReturnValueOnce(mockFarmsByStateQueryBuilder);
 
-    // Configura o mock para o cropRepository
     mockCropRepository.createQueryBuilder.mockReturnValue(
       mockCropsByTypeQueryBuilder,
     );
 
-    // Executa o método a ser testado
     const result = await service.getDashboardData();
 
     const expected = {
