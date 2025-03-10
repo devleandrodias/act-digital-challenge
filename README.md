@@ -54,15 +54,7 @@ git clone https://github.com/devleandrodias/act-digital-challenge
 cd act-digital-challenge
 ```
 
-### 2️⃣ **Configure as variáveis de ambiente**
-
-Crie um arquivo **`.env`** na raiz do projeto e adicione as seguintes configurações:
-
-```env
-DATABASE_URL=postgres://user:password@postgres:5432/agriculture
-```
-
-### 3️⃣ **Suba os containers com Docker**
+### 2️⃣ **Suba os containers com Docker**
 
 ```sh
 docker-compose up --build
@@ -70,7 +62,7 @@ docker-compose up --build
 
 Isso iniciará os serviços **backend, frontend e banco de dados PostgreSQL**.
 
-### 4️⃣ **Acesse os serviços**
+### 3️⃣ **Acesse os serviços**
 
 - **API Backend**: `http://localhost:3000`
 - **Documentação Swagger**: `http://localhost:3000/api`
@@ -137,6 +129,10 @@ Para mais detalhes, acesse a **documentação Swagger** em `http://localhost:300
 ## ✅ Executando Testes Unitários
 
 Os testes unitários foram implementados utilizando **Jest** e cobrem **100% das regras de negócio**. Para rodar os testes:
+
+```sh
+npm install
+```
 
 ```sh
 npm run test
