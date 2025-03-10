@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Crop } from '../crop/crop.entity';
 import { Farm } from '../farm/farm.entity';
 
-import { DashboardService } from './dashboard.service';
+import { DashboardService } from './services/dashboard.service';
 import { DashboardController } from './dashboard.controller';
 
 @Module({

@@ -4,7 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Crop } from './crop.entity';
 import { Harvest } from '../harvest/harvest.entity';
 
-import { CropService } from './crop.service';
+import { CropService } from './services/crop.service';
 import { CropController } from './crop.controller';
 
 @Module({

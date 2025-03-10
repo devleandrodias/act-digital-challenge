@@ -2,11 +2,11 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Crop } from './crop.entity';
-import { Harvest } from '../harvest/harvest.entity';
+import { Crop } from '../crop.entity';
+import { Harvest } from '../../harvest/harvest.entity';
 
-import { CreateCropDto } from './dtos/createCrop.dto';
-import { UpdateCropDto } from './dtos/updateCrop.dto';
+import { CreateCropDto } from '../dtos/createCrop.dto';
+import { UpdateCropDto } from '../dtos/updateCrop.dto';
 
 @Injectable()
 export class CropService {

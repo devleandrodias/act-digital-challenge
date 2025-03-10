@@ -2,8 +2,8 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Crop } from '../crop/crop.entity';
-import { Farm } from '../farm/farm.entity';
+import { Crop } from '../../crop/crop.entity';
+import { Farm } from '../../farm/farm.entity';
 
 @Injectable()
 export class DashboardService {

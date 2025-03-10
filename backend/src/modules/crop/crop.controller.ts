@@ -8,7 +8,7 @@ import {
   Controller,
 } from '@nestjs/common';
 
-import { CropService } from './crop.service';
+import { CropService } from './services/crop.service';
 import { CreateCropDto } from './dtos/createCrop.dto';
 import { UpdateCropDto } from './dtos/updateCrop.dto';
 
