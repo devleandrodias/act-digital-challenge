@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 
 import { Harvest } from '../harvest/harvest.entity';
-import { Producer } from '@modules/producer/producer.entity';
+import { Producer } from '../producer/producer.entity';
 
 @Entity()
 export class Farm {

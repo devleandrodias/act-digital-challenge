@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { Farm } from '@modules/farm/farm.entity';
-import { Crop } from '@modules/crop/crop.entity';
+import { Crop } from '../crop/crop.entity';
+import { Farm } from '../farm/farm.entity';
 
 @Entity()
 export class Harvest {

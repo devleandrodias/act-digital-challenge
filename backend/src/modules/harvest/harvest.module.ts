@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { Farm } from '@modules/farm/farm.entity';
-import { Crop } from '@modules/crop/crop.entity';
-
 import { Harvest } from './harvest.entity';
+import { Crop } from '../crop/crop.entity';
+import { Farm } from '../farm/farm.entity';
+
 import { HarvestService } from './harvest.service';
 import { HarvestController } from './harvest.controller';
 

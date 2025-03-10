@@ -1,5 +1,6 @@
-import { Farm } from '@modules/farm/farm.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+
+import { Farm } from '../farm/farm.entity';
 
 @Entity()
 export class Producer {

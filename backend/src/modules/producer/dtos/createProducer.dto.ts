@@ -9,7 +9,7 @@ import {
   ValidateNested,
 } from 'class-validator';
 
-import { CreateFarmDto } from '@modules/farm/dtos/createFarm.dto';
+import { CreateFarmDto } from 'src/modules/farm/dtos/createFarm.dto';
 
 export class CreateProducerDto {
   @IsNotEmpty()

@@ -3,8 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { paginate, Paginated, PaginateQuery } from 'nestjs-paginate';
 
-import { Producer } from './producer.entity';
-import { CreateProducerDto } from './dtos/createProducer.dto';
+import { Producer } from '../producer.entity';
+import { CreateProducerDto } from '../dtos/createProducer.dto';
 
 @Injectable()
 export class ProducerService {

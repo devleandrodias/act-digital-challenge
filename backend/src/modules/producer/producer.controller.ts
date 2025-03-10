@@ -11,7 +11,7 @@ import {
 
 import { PaginateQuery } from 'nestjs-paginate';
 
-import { ProducerService } from './producer.service';
+import { ProducerService } from './services/producer.service';
 import { CreateProducerDto } from './dtos/createProducer.dto';
 import { UpdateProducerDto } from './dtos/updateProducer.dto';
 
