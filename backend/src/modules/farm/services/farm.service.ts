@@ -2,10 +2,10 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
 
-import { Farm } from './farm.entity';
-import { CreateFarmDto } from './dtos/createFarm.dto';
-import { UpdateFarmDto } from './dtos/updateFarm.dto';
-import { Producer } from '../producer/producer.entity';
+import { Farm } from '../farm.entity';
+import { CreateFarmDto } from '../dtos/createFarm.dto';
+import { UpdateFarmDto } from '../dtos/updateFarm.dto';
+import { Producer } from '../../producer/producer.entity';
 
 @Injectable()
 export class FarmService {

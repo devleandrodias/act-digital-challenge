@@ -8,7 +8,7 @@ import {
   Controller,
 } from '@nestjs/common';
 
-import { FarmService } from './farm.service';
+import { FarmService } from './services/farm.service';
 import { CreateFarmDto } from './dtos/createFarm.dto';
 import { UpdateFarmDto } from './dtos/updateFarm.dto';
 
